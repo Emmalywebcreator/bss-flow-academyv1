@@ -29,7 +29,7 @@ tick each one off as it is merged.
   route can return `verified: true` with no enrollment written.
   — `app/api/payment/verify/route.ts:51-73`
 
-- [ ] **3. Paid but not enrolled is unrecoverable.** If the cohort lookup
+- [x] **3. Paid but not enrolled is unrecoverable.** If the cohort lookup
   fails or the enrollment insert fails after the payment is marked
   `success`, every later verify short-circuits at
   `payment.status === "success"` and never retries the enrollment. On

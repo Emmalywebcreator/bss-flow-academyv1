@@ -30,7 +30,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Payment not found." }, { status: 404 });
   }
 
+  // Already verified: still make sure the enrollment exists, so a
+  // retry repairs an earlier attempt that failed after recording the
+  // payment as successful.
   if (payment.status === "success") {
+    if (!(await ensurePaidEnrollment(supabase, payment.registration_id))) {
+      return NextResponse.json({ error: "Could not complete enrollment." }, { status: 500 });
+    }
     return NextResponse.json({ verified: true }, { status: 200 });
   }
 
@@ -69,6 +75,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not verify payment." }, { status: 500 });
   }
 
+  if (!(await ensurePaidEnrollment(supabase, payment.registration_id))) {
+    return NextResponse.json({ error: "Could not complete enrollment." }, { status: 500 });
+  }
+
+  return NextResponse.json({ verified: true }, { status: 200 });
+}
+
+/**
+ * Creates the paid enrollment for a registration if it doesn't already
+ * exist. Returns false (after logging) if it could not be saved.
+ */
+async function ensurePaidEnrollment(
+  supabase: ReturnType<typeof getSupabaseServerClient>,
+  registrationId: string
+): Promise<boolean> {
   const { data: cohort, error: cohortError } = await supabase
     .from("cohorts")
     .select("id")
@@ -77,14 +98,14 @@ export async function POST(request: Request) {
 
   if (cohortError || !cohort) {
     console.error("paid enrollment cohort lookup failed", cohortError ?? "cohort not found");
-    return NextResponse.json({ error: "Could not complete enrollment." }, { status: 500 });
+    return false;
   }
 
   // Concurrent verifies of the same reference must not create a
   // second enrollment.
   const { error: enrollmentError } = await supabase.from("enrollments").upsert(
     {
-      registration_id: payment.registration_id,
+      registration_id: registrationId,
       cohort_id: cohort.id,
       access_type: "paid",
     },
@@ -93,8 +114,8 @@ export async function POST(request: Request) {
 
   if (enrollmentError) {
     console.error("paid enrollment failed", enrollmentError);
-    return NextResponse.json({ error: "Could not complete enrollment." }, { status: 500 });
+    return false;
   }
 
-  return NextResponse.json({ verified: true }, { status: 200 });
+  return true;
 }

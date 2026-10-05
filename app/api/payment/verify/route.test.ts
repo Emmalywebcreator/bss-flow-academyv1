@@ -54,6 +54,32 @@ describe("POST /api/payment/verify", () => {
     ]);
   });
 
+  test("repairs a missing enrollment when the payment is already verified", async () => {
+    supabaseMock.respond("payments", { data: { ...pendingPayment, status: "success" }, error: null });
+    supabaseMock.respond("cohorts", { data: { id: "cohort-1" }, error: null });
+
+    const response = await verify();
+
+    expect(await response.json()).toEqual({ verified: true });
+    expect(paystackMock.verifyTransaction).not.toHaveBeenCalled();
+    expect(supabaseMock.calls("enrollments")[0]).toEqual([
+      "upsert",
+      { registration_id: registrationId, cohort_id: "cohort-1", access_type: "paid" },
+      { onConflict: "registration_id,cohort_id", ignoreDuplicates: true },
+    ]);
+  });
+
+  test("errors if an already-verified payment's enrollment cannot be repaired", async () => {
+    supabaseMock.respond("payments", { data: { ...pendingPayment, status: "success" }, error: null });
+    supabaseMock.respond("cohorts", { data: { id: "cohort-1" }, error: null });
+    supabaseMock.respond("enrollments", { data: null, error: dbError });
+
+    const response = await verify();
+
+    expect(response.status).toBe(500);
+    expect(await response.json()).toEqual({ error: "Could not complete enrollment." });
+  });
+
   test("errors if a failed payment cannot be recorded", async () => {
     supabaseMock.respond(
       "payments",
