@@ -119,9 +119,10 @@ tick each one off as it is merged.
   is the source of truth; the unused column is dropped.
 - [x] **16. `registrations.cohort_id` is never set.** Decided: set it
   at registration time and make it required.
-- [ ] **17. Duplicate registrations.** The same email can register
-  repeatedly, and refreshing `/register` mid-flow starts over. Decide
-  whether to reuse an existing registration by email.
+- [x] **17. Duplicate registrations.** The same email can register
+  repeatedly, and refreshing `/register` mid-flow starts over. Decided:
+  reuse an unenrolled registration with the same email (case-insensitive);
+  stop an already-enrolled email with a message, without granting access.
 - [ ] **18. Paystack client robustness.** `response.json()` throws an
   unclear error on non-JSON responses, and `fetch` has no timeout.
   — `lib/paystack.ts`
