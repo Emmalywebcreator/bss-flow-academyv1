@@ -33,9 +33,14 @@ the schema, and `docs/api.md` for the API contract.
 
 3. Set up the database — run `supabase/schema.sql` in your Supabase
    project's SQL editor. This creates `cohorts`, `registrations`,
-   `payments`, and `enrollments`, and seeds a `Cohort 1` row with a
-   placeholder sponsor code (`COHORT1-SPONSOR`) that you should replace
-   before going live.
+   `payments`, and `enrollments`, and seeds a `Cohort 1` row with no
+   sponsor code — sponsored enrollment is disabled until you set one.
+   Pick a hard-to-guess code and set it in the SQL editor (never commit
+   it to the repo):
+
+   ```sql
+   update cohorts set sponsor_code = '<your-secret-code>' where name = 'Cohort 1';
+   ```
 
 4. Run the dev server:
 

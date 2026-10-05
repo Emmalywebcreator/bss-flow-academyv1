@@ -235,7 +235,8 @@ export default function RegisterPage() {
               onChange={(event) => setCohortCode(event.target.value)}
               required
               className="rounded-lg border border-zinc-300 px-3 py-2 text-zinc-950 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-              placeholder="e.g. COHORT1-SPONSOR"
+              aria-label="Sponsor code"
+              placeholder="Enter the code from your sponsor"
             />
 
             {codeResult === "invalid" && (

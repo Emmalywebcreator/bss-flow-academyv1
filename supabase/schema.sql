@@ -53,9 +53,13 @@ create table if not exists enrollments (
 create index if not exists payments_registration_id_idx on payments(registration_id);
 create index if not exists enrollments_registration_id_idx on enrollments(registration_id);
 
--- Seed Cohort 1. Replace the sponsor code before going live.
+-- Seed Cohort 1 with no sponsor code, so sponsored enrollment stays
+-- disabled until a real code is set. Never commit a real code here —
+-- set it directly in the Supabase SQL editor:
+--
+--   update cohorts set sponsor_code = '<your-secret-code>' where name = 'Cohort 1';
 insert into cohorts (name, sponsor_code, is_active, price)
-values ('Cohort 1', 'COHORT1-SPONSOR', true, 80000)
+values ('Cohort 1', null, true, 80000)
 on conflict do nothing;
 
 -- Row Level Security: all writes happen through API routes using the
