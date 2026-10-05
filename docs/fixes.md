@@ -64,11 +64,10 @@ tick each one off as it is merged.
   verify-and-enrol logic as fix 3 (move that logic into a shared
   function).
 
-- [ ] **8. Telegram link is still a placeholder.** The link now comes from
+- [x] **8. Telegram link is still a placeholder.** The link now comes from
   the server-only `TELEGRAM_INVITE_LINK` environment variable (moved out
   of `constants/program.ts` in fix 6, because that file is bundled into
-  the browser). Set locally in `.env.local`; still to set in Vercel:
-  `https://t.me/+E2y0yzuc5UYxNjVk`.
+  the browser). Set in `.env.local` and in Vercel.
 
 ## P1 — Should fix before launch
 
