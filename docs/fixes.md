@@ -82,7 +82,7 @@ tick each one off as it is merged.
   Return "already enrolled" instead.
   — `app/api/payment/initialize/route.ts`
 
-- [ ] **11. Duplicate "Cohort 1" rows break lookups.** `on conflict do
+- [x] **11. Duplicate "Cohort 1" rows break lookups.** `on conflict do
   nothing` in the seed never fires, because `cohorts.name` isn't unique.
   A second "Cohort 1" row would make `.maybeSingle()` error in
   `payment/verify`. Add `unique (name)`.
