@@ -37,7 +37,7 @@ tick each one off as it is merged.
   before returning `verified: true`.
   — `app/api/payment/verify/route.ts:33-35, 61-71`
 
-- [ ] **4. Sponsor code endpoint can be brute-forced.**
+- [x] **4. Sponsor code endpoint can be brute-forced.**
   `/api/cohort/validate` has no rate limit, so codes can be guessed.
   Add per-IP and per-registration attempt limits, and use a long,
   random code in production.

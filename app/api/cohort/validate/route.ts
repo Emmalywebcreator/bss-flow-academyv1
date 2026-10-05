@@ -21,6 +21,30 @@ export async function POST(request: Request) {
   const { registrationId, code } = parsed.data;
   const supabase = getSupabaseServerClient();
 
+  // Limit attempts per IP and per registration so codes can't be
+  // brute-forced. The host (e.g. Vercel) sets x-forwarded-for.
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown";
+
+  const { data: allowed, error: rateLimitError } = await supabase.rpc(
+    "record_cohort_code_attempt",
+    { p_ip: ip, p_registration_id: registrationId }
+  );
+
+  if (rateLimitError) {
+    console.error("cohort code rate limit check failed", rateLimitError);
+    return NextResponse.json({ error: "Could not validate code." }, { status: 500 });
+  }
+
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please wait 15 minutes and try again." },
+      { status: 429 }
+    );
+  }
+
   const { data: cohort, error: cohortError } = await supabase
     .from("cohorts")
     .select("id, name")
