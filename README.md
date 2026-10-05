@@ -48,6 +48,8 @@ the schema, and `docs/api.md` for the API contract.
    `SUPABASE_SERVICE_ROLE_KEY` (the "Secret" key) from `npm run db:status`.
    You'll also need a Paystack secret key — use a test key
    (`sk_test_...`) in development.
+   Set `TELEGRAM_INVITE_LINK` to the community invite; it is shown
+   only to enrolled students, on the welcome page.
 
 4. Run the dev server:
 
@@ -65,6 +67,10 @@ Create a project at [supabase.com](https://supabase.com), then:
 npx supabase link --project-ref <your-project-ref>
 npx supabase db push
 ```
+
+In Vercel, set the same environment variables as `.env.local`
+(Project Settings → Environment Variables), with the hosted Supabase
+values and your live Paystack key.
 
 `db push` applies the migrations only — `seed.sql` is never pushed, so
 the hosted Cohort 1 starts with no sponsor code. Set a hard-to-guess

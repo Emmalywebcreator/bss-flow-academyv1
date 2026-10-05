@@ -33,6 +33,7 @@ describe("POST /api/cohort/validate", () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ valid: false });
+    expect(response.headers.get("set-cookie")).toBeNull();
   });
 
   test("enrolls with a matching code", async () => {
@@ -44,6 +45,9 @@ describe("POST /api/cohort/validate", () => {
     );
 
     expect(await response.json()).toEqual({ valid: true, cohortName: "Cohort 1" });
+    expect(response.headers.get("set-cookie")).toMatch(
+      new RegExp(`^bss_enrollment=${registrationId};.*HttpOnly`, "i")
+    );
     expect(supabaseMock.calls("rpc:enroll_with_sponsor_code")).toEqual([
       ["rpc", { p_registration_id: registrationId, p_code: "real-code" }],
     ]);

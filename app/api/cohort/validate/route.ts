@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cohortCodeSchema } from "@/lib/schemas";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { setEnrollmentCookie } from "@/lib/enrollment-access";
 
 /**
  * Validates a cohort sponsorship code and, if valid and sponsored
@@ -78,7 +79,10 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({ valid: true, cohortName }, { status: 200 });
+  return setEnrollmentCookie(
+    NextResponse.json({ valid: true, cohortName }, { status: 200 }),
+    registrationId
+  );
 }
 
 /** Shape returned by the enroll_with_sponsor_code database function. */

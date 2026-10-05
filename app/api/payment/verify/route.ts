@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { paymentVerifySchema } from "@/lib/schemas";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { setEnrollmentCookie } from "@/lib/enrollment-access";
 import { verifyTransaction } from "@/lib/paystack";
 import { PROGRAM } from "@/constants/program";
 
@@ -37,7 +38,10 @@ export async function POST(request: Request) {
     if (!(await ensurePaidEnrollment(supabase, payment.registration_id))) {
       return NextResponse.json({ error: "Could not complete enrollment." }, { status: 500 });
     }
-    return NextResponse.json({ verified: true }, { status: 200 });
+    return setEnrollmentCookie(
+      NextResponse.json({ verified: true }, { status: 200 }),
+      payment.registration_id
+    );
   }
 
   let transaction;
@@ -79,7 +83,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not complete enrollment." }, { status: 500 });
   }
 
-  return NextResponse.json({ verified: true }, { status: 200 });
+  return setEnrollmentCookie(
+    NextResponse.json({ verified: true }, { status: 200 }),
+    payment.registration_id
+  );
 }
 
 /**

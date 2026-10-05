@@ -49,7 +49,7 @@ tick each one off as it is merged.
   40 students for Cohort 1.
   — `supabase/migrations/`, `app/api/cohort/validate/route.ts`
 
-- [ ] **6. `/welcome` is open to everyone.** Anyone can open `/welcome`
+- [x] **6. `/welcome` is open to everyone.** Anyone can open `/welcome`
   and get the Telegram link without enrolling, which breaks the
   architecture rule that the browser never decides access. Gate it
   server-side: pass a reference to the welcome page and confirm an
@@ -64,9 +64,11 @@ tick each one off as it is merged.
   verify-and-enrol logic as fix 3 (move that logic into a shared
   function).
 
-- [ ] **8. Telegram link is still a placeholder.** Set the real invite:
+- [ ] **8. Telegram link is still a placeholder.** The link now comes from
+  the server-only `TELEGRAM_INVITE_LINK` environment variable (moved out
+  of `constants/program.ts` in fix 6, because that file is bundled into
+  the browser). Set locally in `.env.local`; still to set in Vercel:
   `https://t.me/+E2y0yzuc5UYxNjVk`.
-  — `constants/program.ts:8`
 
 ## P1 — Should fix before launch
 

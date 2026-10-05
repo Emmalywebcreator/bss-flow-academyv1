@@ -4,6 +4,7 @@ export const PROGRAM = {
   currency: "NGN",
   standardPrice: 80000,
   firstCohort: "Cohort 1",
-  // Update once the community is live.
-  telegramInviteLink: "https://t.me/your_invite_link_here",
+  // The Telegram invite link is deliberately not here: this object is
+  // bundled into client components. It comes from TELEGRAM_INVITE_LINK,
+  // read server-side by the welcome page only.
 } as const;

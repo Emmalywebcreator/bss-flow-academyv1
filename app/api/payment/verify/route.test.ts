@@ -47,6 +47,9 @@ describe("POST /api/payment/verify", () => {
     const response = await verify();
 
     expect(await response.json()).toEqual({ verified: true });
+    expect(response.headers.get("set-cookie")).toMatch(
+      new RegExp(`^bss_enrollment=${registrationId};.*HttpOnly`, "i")
+    );
     expect(supabaseMock.calls("enrollments")[0]).toEqual([
       "upsert",
       { registration_id: registrationId, cohort_id: "cohort-1", access_type: "paid" },
@@ -128,5 +131,6 @@ describe("POST /api/payment/verify", () => {
 
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({ error: "Could not complete enrollment." });
+    expect(response.headers.get("set-cookie")).toBeNull();
   });
 });
