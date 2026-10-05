@@ -37,11 +37,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ valid: false }, { status: 200 });
   }
 
-  const { error: enrollmentError } = await supabase.from("enrollments").insert({
-    registration_id: registrationId,
-    cohort_id: cohort.id,
-    access_type: "sponsored",
-  });
+  // Already enrolled in this cohort (e.g. the code was resubmitted)
+  // counts as success rather than creating a second enrollment.
+  const { error: enrollmentError } = await supabase.from("enrollments").upsert(
+    {
+      registration_id: registrationId,
+      cohort_id: cohort.id,
+      access_type: "sponsored",
+    },
+    { onConflict: "registration_id,cohort_id", ignoreDuplicates: true }
+  );
 
   if (enrollmentError) {
     console.error("sponsored enrollment failed", enrollmentError);

@@ -16,7 +16,7 @@ tick each one off as it is merged.
 
 ## P0 — Must fix before launch
 
-- [ ] **1. Enrollments can be duplicated.** `enrollments` has no unique
+- [x] **1. Enrollments can be duplicated.** `enrollments` has no unique
   constraint, so a refreshed callback, two concurrent verifies, or
   entering a sponsor code twice each create another row. Add
   `unique (registration_id, cohort_id)` in a new migration and make both

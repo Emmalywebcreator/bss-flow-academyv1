@@ -62,11 +62,16 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (cohort) {
-    await supabase.from("enrollments").insert({
-      registration_id: payment.registration_id,
-      cohort_id: cohort.id,
-      access_type: "paid",
-    });
+    // Concurrent verifies of the same reference must not create a
+    // second enrollment.
+    await supabase.from("enrollments").upsert(
+      {
+        registration_id: payment.registration_id,
+        cohort_id: cohort.id,
+        access_type: "paid",
+      },
+      { onConflict: "registration_id,cohort_id", ignoreDuplicates: true }
+    );
   }
 
   return NextResponse.json({ verified: true }, { status: 200 });

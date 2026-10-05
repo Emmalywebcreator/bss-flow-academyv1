@@ -7,6 +7,15 @@ const schema = readFileSync(
   "utf8"
 );
 
+test("a registration can only be enrolled once per cohort", () => {
+  const migration = readFileSync(
+    join(__dirname, "migrations", "20261005120000_unique_enrollment_per_cohort.sql"),
+    "utf8"
+  );
+
+  expect(migration).toMatch(/unique\s*\(\s*registration_id\s*,\s*cohort_id\s*\)/i);
+});
+
 test("cohort seed does not ship a usable sponsor code", () => {
   const seed = schema.match(/insert into cohorts[\s\S]*?;/i)?.[0];
 

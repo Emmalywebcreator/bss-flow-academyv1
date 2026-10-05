@@ -36,8 +36,9 @@ describe("POST /api/cohort/validate", () => {
 
     expect(await response.json()).toEqual({ valid: true, cohortName: "Cohort 1" });
     expect(supabaseMock.calls("enrollments")[0]).toEqual([
-      "insert",
+      "upsert",
       { registration_id: registrationId, cohort_id: "cohort-1", access_type: "sponsored" },
+      { onConflict: "registration_id,cohort_id", ignoreDuplicates: true },
     ]);
   });
 });
