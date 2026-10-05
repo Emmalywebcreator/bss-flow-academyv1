@@ -83,6 +83,68 @@ describe("POST /api/payment/verify", () => {
     expect(await response.json()).toEqual({ error: "Could not complete enrollment." });
   });
 
+  test("rejects a request without a payment reference", async () => {
+    const response = await POST(jsonRequest("/api/payment/verify", { reference: "  " }));
+
+    expect(response.status).toBe(400);
+    expect(supabaseMock.calls("payments")).toEqual([]);
+  });
+
+  test("returns 404 for an unknown reference, without asking Paystack", async () => {
+    supabaseMock.respond("payments", { data: null, error: null });
+
+    const response = await verify();
+
+    expect(response.status).toBe(404);
+    expect(paystackMock.verifyTransaction).not.toHaveBeenCalled();
+  });
+
+  test("returns 502 and leaves the payment pending if Paystack can't be reached", async () => {
+    supabaseMock.respond("payments", { data: pendingPayment, error: null });
+    paystackMock.verifyTransaction.mockRejectedValue(new Error("network down"));
+
+    const response = await verify();
+
+    expect(response.status).toBe(502);
+    expect(supabaseMock.calls("payments")).not.toContainEqual(
+      expect.arrayContaining(["update"])
+    );
+    expect(supabaseMock.calls("enrollments")).toEqual([]);
+  });
+
+  test.each([
+    ["the transaction did not succeed", { status: "failed" }],
+    ["the transaction was abandoned", { status: "abandoned" }],
+    ["less than the fee was paid", { amount: 100 }],
+    ["the fee was paid in naira instead of kobo", { amount: 80000 }],
+    ["a different currency was paid", { currency: "USD" }],
+  ])("does not enroll when %s", async (_case, override) => {
+    supabaseMock.respond("payments", { data: pendingPayment, error: null });
+    paystackMock.verifyTransaction.mockResolvedValue({ ...successfulTransaction, ...override });
+
+    const response = await verify();
+
+    expect(await response.json()).toEqual({ verified: false });
+    expect(response.headers.get("set-cookie")).toBeNull();
+    expect(supabaseMock.calls("payments")).toContainEqual(["update", { status: "failed" }]);
+    expect(supabaseMock.calls("enrollments")).toEqual([]);
+  });
+
+  test("verifies with Paystack using the reference from the request", async () => {
+    supabaseMock.respond("payments", { data: pendingPayment, error: null });
+    supabaseMock.respond("cohorts", { data: { id: "cohort-1" }, error: null });
+    paystackMock.verifyTransaction.mockResolvedValue(successfulTransaction);
+
+    await verify();
+
+    expect(supabaseMock.calls("payments")).toContainEqual(["eq", "reference", "bss-ref"]);
+    expect(paystackMock.verifyTransaction).toHaveBeenCalledWith("bss-ref");
+    expect(supabaseMock.calls("payments")).toContainEqual([
+      "update",
+      { status: "success", paid_at: "2026-10-05T12:00:00Z" },
+    ]);
+  });
+
   test("errors if a failed payment cannot be recorded", async () => {
     supabaseMock.respond(
       "payments",

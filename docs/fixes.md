@@ -71,7 +71,7 @@ tick each one off as it is merged.
 
 ## P1 — Should fix before launch
 
-- [ ] **9. Tests for the payment routes.** `payment/initialize` and
+- [x] **9. Tests for the payment routes.** `payment/initialize` and
   `payment/verify` have no tests. Cover the amount, currency and status
   mismatches, the already-verified path, and the error paths from
   fixes 1–3.
