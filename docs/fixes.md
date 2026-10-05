@@ -100,7 +100,7 @@ tick each one off as it is merged.
   mismatch.
   — `lib/paystack.ts:26`, `app/api/payment/verify/route.ts:47-50`
 
-- [ ] **14. Dead end on the payment failure screen.** The callback page's
+- [x] **14. Dead end on the payment failure screen.** The callback page's
   `failed` and `error` states give no way to retry or go back, and don't
   show the reference the student is told to quote to support.
   — `app/payment/callback/page.tsx:62-77`
