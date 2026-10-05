@@ -30,6 +30,9 @@ interface PaystackVerifyData {
   amount: number;
   currency: string;
   paid_at: string | null;
+  // Whatever was sent as metadata when initializing; Paystack may return
+  // it as an object or as a JSON string.
+  metadata: unknown;
 }
 
 /**

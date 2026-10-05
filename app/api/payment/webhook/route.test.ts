@@ -62,6 +62,7 @@ describe("POST /api/payment/webhook", () => {
       amount: 8000000,
       currency: "NGN",
       paid_at: "2026-10-05T12:00:00Z",
+      metadata: { registrationId },
     });
 
     const response = await webhook(chargeSuccess);

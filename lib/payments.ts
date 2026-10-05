@@ -11,7 +11,8 @@ export type VerifyAndEnrollResult =
 /**
  * Verifies a payment directly with Paystack (never trusting the
  * client's or webhook body's word for it), checking reference, status,
- * amount and currency, then creates the paid enrollment.
+ * amount, currency and the associated registration, then creates the
+ * paid enrollment.
  *
  * Shared by the payment callback (POST /api/payment/verify) and the
  * Paystack webhook, so a student is enrolled even if they close the tab
@@ -49,10 +50,19 @@ export async function verifyAndEnroll(reference: string): Promise<VerifyAndEnrol
     return { outcome: "error", status: 502, message: "Could not verify payment." };
   }
 
+  const referenceMatches = transaction.reference === reference;
   const amountMatches = transaction.amount === payment.amount * 100;
   const currencyMatches = transaction.currency === payment.currency;
+  const registrationMatches =
+    metadataRegistrationId(transaction.metadata) === payment.registration_id;
 
-  if (transaction.status !== "success" || !amountMatches || !currencyMatches) {
+  if (
+    transaction.status !== "success" ||
+    !referenceMatches ||
+    !amountMatches ||
+    !currencyMatches ||
+    !registrationMatches
+  ) {
     const { error: failedUpdateError } = await supabase
       .from("payments")
       .update({ status: "failed" })
@@ -81,6 +91,25 @@ export async function verifyAndEnroll(reference: string): Promise<VerifyAndEnrol
   }
 
   return { outcome: "verified", registrationId: payment.registration_id };
+}
+
+/**
+ * The registration ID payment/initialize sent to Paystack as metadata.
+ * Paystack may return metadata as an object or a JSON string.
+ */
+function metadataRegistrationId(metadata: unknown): string | undefined {
+  let value = metadata;
+  if (typeof value === "string") {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      return undefined;
+    }
+  }
+  if (typeof value !== "object" || value === null) return undefined;
+
+  const registrationId = (value as { registrationId?: unknown }).registrationId;
+  return typeof registrationId === "string" ? registrationId : undefined;
 }
 
 /**

@@ -26,6 +26,7 @@ const successfulTransaction = {
   amount: 8000000,
   currency: "NGN",
   paid_at: "2026-10-05T12:00:00Z",
+  metadata: { registrationId },
 };
 
 function verify() {
@@ -118,6 +119,13 @@ describe("POST /api/payment/verify", () => {
     ["less than the fee was paid", { amount: 100 }],
     ["the fee was paid in naira instead of kobo", { amount: 80000 }],
     ["a different currency was paid", { currency: "USD" }],
+    ["Paystack reports a different reference", { reference: "bss-other" }],
+    [
+      "the payment belongs to a different registration",
+      { metadata: { registrationId: "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d" } },
+    ],
+    ["the transaction has no registration metadata", { metadata: null }],
+    ["the registration metadata is malformed", { metadata: "not json" }],
   ])("does not enroll when %s", async (_case, override) => {
     supabaseMock.respond("payments", { data: pendingPayment, error: null });
     paystackMock.verifyTransaction.mockResolvedValue({ ...successfulTransaction, ...override });
@@ -128,6 +136,19 @@ describe("POST /api/payment/verify", () => {
     expect(response.headers.get("set-cookie")).toBeNull();
     expect(supabaseMock.calls("payments")).toContainEqual(["update", { status: "failed" }]);
     expect(supabaseMock.calls("enrollments")).toEqual([]);
+  });
+
+  test("accepts registration metadata that Paystack returns as a JSON string", async () => {
+    supabaseMock.respond("payments", { data: pendingPayment, error: null });
+    supabaseMock.respond("cohorts", { data: { id: "cohort-1" }, error: null });
+    paystackMock.verifyTransaction.mockResolvedValue({
+      ...successfulTransaction,
+      metadata: JSON.stringify({ registrationId }),
+    });
+
+    const response = await verify();
+
+    expect(await response.json()).toEqual({ verified: true });
   });
 
   test("verifies with Paystack using the reference from the request", async () => {

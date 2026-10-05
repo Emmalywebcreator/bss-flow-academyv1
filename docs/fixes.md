@@ -88,7 +88,7 @@ tick each one off as it is merged.
   `payment/verify`. Add `unique (name)`.
   — `supabase/migrations/20261005000000_initial_schema.sql:61-63`
 
-- [ ] **12. Verify doesn't check the associated registration.**
+- [x] **12. Verify doesn't check the associated registration.**
   `docs/api.md` requires it. Compare the transaction's
   `metadata.registrationId` with `payment.registration_id`.
   — `app/api/payment/verify/route.ts`
