@@ -93,7 +93,7 @@ tick each one off as it is merged.
   `metadata.registrationId` with `payment.registration_id`.
   — `app/api/payment/verify/route.ts`
 
-- [ ] **13. Pending payments are marked `failed`.** Paystack can return
+- [x] **13. Pending payments are marked `failed`.** Paystack can return
   `ongoing`, `pending`, `processing` or `abandoned`, which the
   `PaystackVerifyData` type doesn't list. Leave the payment `pending`
   for in-progress statuses and only mark `failed` on a real failure or

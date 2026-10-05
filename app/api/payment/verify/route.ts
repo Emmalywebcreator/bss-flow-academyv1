@@ -25,6 +25,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: result.message }, { status: result.status });
     case "not_verified":
       return NextResponse.json({ verified: false }, { status: 200 });
+    case "pending":
+      return NextResponse.json({ verified: false, pending: true }, { status: 200 });
     case "verified":
       return setEnrollmentCookie(
         NextResponse.json({ verified: true }, { status: 200 }),

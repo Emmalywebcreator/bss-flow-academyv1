@@ -2,9 +2,13 @@ import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { verifyTransaction } from "@/lib/paystack";
 import { PROGRAM } from "@/constants/program";
 
+/** Paystack statuses that mean the payment will not succeed. */
+const FAILED_STATUSES = new Set(["failed", "reversed"]);
+
 export type VerifyAndEnrollResult =
   | { outcome: "verified"; registrationId: string }
   | { outcome: "not_verified" }
+  | { outcome: "pending" }
   | { outcome: "not_found" }
   | { outcome: "error"; status: 500 | 502; message: string };
 
@@ -48,6 +52,13 @@ export async function verifyAndEnroll(reference: string): Promise<VerifyAndEnrol
   } catch (err) {
     console.error("paystack verify failed", err);
     return { outcome: "error", status: 502, message: "Could not verify payment." };
+  }
+
+  // Not finished yet (e.g. a bank transfer still clearing, or a checkout
+  // the student hasn't completed): leave the payment pending. The webhook
+  // enrolls them if it later succeeds.
+  if (transaction.status !== "success" && !FAILED_STATUSES.has(transaction.status)) {
+    return { outcome: "pending" };
   }
 
   const referenceMatches = transaction.reference === reference;

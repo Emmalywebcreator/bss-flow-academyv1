@@ -42,6 +42,7 @@ export async function POST(request: Request) {
   }
 
   // not_found: a charge this app didn't start. not_verified: Paystack's
-  // API disagrees with the event. Neither will change on retry.
+  // API disagrees with the event. Neither will change on retry. pending:
+  // Paystack sends another charge.success once the payment completes.
   return NextResponse.json({ received: true }, { status: 200 });
 }

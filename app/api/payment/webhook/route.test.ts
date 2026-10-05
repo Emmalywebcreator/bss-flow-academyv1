@@ -92,6 +92,24 @@ describe("POST /api/payment/webhook", () => {
     expect(paystackMock.verifyTransaction).not.toHaveBeenCalled();
   });
 
+  test("acknowledges a charge that is still processing, leaving the payment pending", async () => {
+    supabaseMock.respond("payments", { data: pendingPayment, error: null });
+    paystackMock.verifyTransaction.mockResolvedValue({
+      status: "processing",
+      reference: "bss-ref",
+      amount: 8000000,
+      currency: "NGN",
+      paid_at: null,
+      metadata: { registrationId },
+    });
+
+    const response = await webhook(chargeSuccess);
+
+    expect(response.status).toBe(200);
+    expect(supabaseMock.calls("payments")).not.toContainEqual(expect.arrayContaining(["update"]));
+    expect(supabaseMock.calls("enrollments")).toEqual([]);
+  });
+
   test("returns 500 on a failure on our side, so Paystack retries", async () => {
     supabaseMock.respond("payments", { data: pendingPayment, error: null });
     paystackMock.verifyTransaction.mockRejectedValue(new Error("network down"));

@@ -25,7 +25,17 @@ interface PaystackInitializeData {
 }
 
 interface PaystackVerifyData {
-  status: "success" | "failed" | "abandoned";
+  // "abandoned" also covers a checkout the customer hasn't completed yet;
+  // only "failed" and "reversed" are final failures.
+  status:
+    | "success"
+    | "failed"
+    | "reversed"
+    | "abandoned"
+    | "ongoing"
+    | "pending"
+    | "processing"
+    | "queued";
   reference: string;
   amount: number;
   currency: string;

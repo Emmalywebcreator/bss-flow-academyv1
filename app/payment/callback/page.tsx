@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-type Status = "verifying" | "success" | "failed" | "error";
+type Status = "verifying" | "success" | "pending" | "failed" | "error";
 
 function CallbackContent() {
   const router = useRouter();
@@ -35,6 +35,8 @@ function CallbackContent() {
         if (data.verified) {
           setStatus("success");
           router.replace("/welcome");
+        } else if (data.pending) {
+          setStatus("pending");
         } else {
           setStatus("failed");
         }
@@ -58,6 +60,15 @@ function CallbackContent() {
         )}
         {status === "success" && (
           <p className="text-zinc-600 dark:text-zinc-400">Payment confirmed. Redirecting...</p>
+        )}
+        {status === "pending" && (
+          <div className="flex flex-col gap-3">
+            <p className="text-zinc-950 dark:text-zinc-50">Your payment is still processing.</p>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              Some payments, such as bank transfers, take a few minutes to confirm. Refresh this
+              page in a few minutes to continue — please don&apos;t pay again.
+            </p>
+          </div>
         )}
         {status === "failed" && (
           <div className="flex flex-col gap-3">

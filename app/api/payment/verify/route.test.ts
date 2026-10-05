@@ -115,7 +115,7 @@ describe("POST /api/payment/verify", () => {
 
   test.each([
     ["the transaction did not succeed", { status: "failed" }],
-    ["the transaction was abandoned", { status: "abandoned" }],
+    ["the transaction was reversed", { status: "reversed" }],
     ["less than the fee was paid", { amount: 100 }],
     ["the fee was paid in naira instead of kobo", { amount: 80000 }],
     ["a different currency was paid", { currency: "USD" }],
@@ -137,6 +137,23 @@ describe("POST /api/payment/verify", () => {
     expect(supabaseMock.calls("payments")).toContainEqual(["update", { status: "failed" }]);
     expect(supabaseMock.calls("enrollments")).toEqual([]);
   });
+
+  test.each(["abandoned", "ongoing", "pending", "processing", "queued"])(
+    "leaves a %s payment pending instead of marking it failed",
+    async (status) => {
+      supabaseMock.respond("payments", { data: pendingPayment, error: null });
+      paystackMock.verifyTransaction.mockResolvedValue({ ...successfulTransaction, status });
+
+      const response = await verify();
+
+      expect(await response.json()).toEqual({ verified: false, pending: true });
+      expect(response.headers.get("set-cookie")).toBeNull();
+      expect(supabaseMock.calls("payments")).not.toContainEqual(
+        expect.arrayContaining(["update"])
+      );
+      expect(supabaseMock.calls("enrollments")).toEqual([]);
+    }
+  );
 
   test("accepts registration metadata that Paystack returns as a JSON string", async () => {
     supabaseMock.respond("payments", { data: pendingPayment, error: null });
