@@ -74,6 +74,14 @@ code in the hosted project's SQL editor (never commit it to the repo):
 update cohorts set sponsor_code = '<your-secret-code>' where name = 'Cohort 1';
 ```
 
+A sponsor code enrolls at most `sponsor_max_uses` students (40 for
+Cohort 1); after that, students are asked to pay the standard fee.
+Revoking a sponsored enrollment frees its place. To change the cap:
+
+```sql
+update cohorts set sponsor_max_uses = <number> where name = 'Cohort 1';
+```
+
 ## Learner journey (V1)
 
 Landing → Register → Cohort code **or** Paystack payment → server

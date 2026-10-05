@@ -43,10 +43,10 @@ tick each one off as it is merged.
   random code in production.
   — `app/api/cohort/validate/route.ts`
 
-- [ ] **5. A sponsor code works for anyone, any number of times.** One
+- [x] **5. A sponsor code works for anyone, any number of times.** One
   shared code with no usage cap means a leaked code enrols unlimited
-  people. Decide the policy: a max-uses counter on `cohorts`, or one
-  code per sponsored student. Needs a product decision.
+  people. Decided: a max-uses cap on `cohorts` (`sponsor_max_uses`),
+  40 students for Cohort 1.
   — `supabase/migrations/`, `app/api/cohort/validate/route.ts`
 
 - [ ] **6. `/welcome` is open to everyone.** Anyone can open `/welcome`

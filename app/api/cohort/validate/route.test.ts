@@ -13,15 +13,19 @@ function rateLimitAllows(allowed: boolean) {
   supabaseMock.respond("rpc:record_cohort_code_attempt", { data: allowed, error: null });
 }
 
+function sponsorOutcome(data: unknown, error: unknown = null) {
+  supabaseMock.respond("rpc:enroll_with_sponsor_code", { data, error });
+}
+
 beforeEach(() => {
   supabaseMock.reset();
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
 describe("POST /api/cohort/validate", () => {
-  test("rejects a code that matches no active cohort, without enrolling", async () => {
+  test("rejects a code that matches no active cohort", async () => {
     rateLimitAllows(true);
-    supabaseMock.respond("cohorts", { data: null, error: null });
+    sponsorOutcome({ result: "invalid" });
 
     const response = await POST(
       jsonRequest("/api/cohort/validate", { registrationId, code: "COHORT1-SPONSOR" })
@@ -29,23 +33,43 @@ describe("POST /api/cohort/validate", () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ valid: false });
-    expect(supabaseMock.calls("enrollments")).toEqual([]);
   });
 
   test("enrolls with a matching code", async () => {
     rateLimitAllows(true);
-    supabaseMock.respond("cohorts", { data: { id: "cohort-1", name: "Cohort 1" }, error: null });
+    sponsorOutcome({ result: "enrolled", cohort_name: "Cohort 1" });
 
     const response = await POST(
       jsonRequest("/api/cohort/validate", { registrationId, code: "real-code" })
     );
 
     expect(await response.json()).toEqual({ valid: true, cohortName: "Cohort 1" });
-    expect(supabaseMock.calls("enrollments")[0]).toEqual([
-      "upsert",
-      { registration_id: registrationId, cohort_id: "cohort-1", access_type: "sponsored" },
-      { onConflict: "registration_id,cohort_id", ignoreDuplicates: true },
+    expect(supabaseMock.calls("rpc:enroll_with_sponsor_code")).toEqual([
+      ["rpc", { p_registration_id: registrationId, p_code: "real-code" }],
     ]);
+  });
+
+  test("turns the student away when all sponsored places are taken", async () => {
+    rateLimitAllows(true);
+    sponsorOutcome({ result: "full" });
+
+    const response = await POST(
+      jsonRequest("/api/cohort/validate", { registrationId, code: "real-code" })
+    );
+
+    expect(response.status).toBe(409);
+    expect((await response.json()).error).toMatch(/sponsored places .* taken/);
+  });
+
+  test("errors if the sponsored enrollment cannot be saved", async () => {
+    rateLimitAllows(true);
+    sponsorOutcome(null, { message: "database unavailable" });
+
+    const response = await POST(
+      jsonRequest("/api/cohort/validate", { registrationId, code: "real-code" })
+    );
+
+    expect(response.status).toBe(500);
   });
 
   test("records the attempt against the caller's IP and registration", async () => {
@@ -68,8 +92,7 @@ describe("POST /api/cohort/validate", () => {
     );
 
     expect(response.status).toBe(429);
-    expect(supabaseMock.calls("cohorts")).toEqual([]);
-    expect(supabaseMock.calls("enrollments")).toEqual([]);
+    expect(supabaseMock.calls("rpc:enroll_with_sponsor_code")).toEqual([]);
   });
 
   test("fails closed if the rate limit check errors", async () => {
@@ -83,6 +106,6 @@ describe("POST /api/cohort/validate", () => {
     );
 
     expect(response.status).toBe(500);
-    expect(supabaseMock.calls("cohorts")).toEqual([]);
+    expect(supabaseMock.calls("rpc:enroll_with_sponsor_code")).toEqual([]);
   });
 });
