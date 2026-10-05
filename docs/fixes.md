@@ -76,7 +76,7 @@ tick each one off as it is merged.
   mismatches, the already-verified path, and the error paths from
   fixes 1–3.
 
-- [ ] **10. A student can pay twice, or pay after using a sponsor code.**
+- [x] **10. A student can pay twice, or pay after using a sponsor code.**
   `payment/initialize` doesn't check whether the registration already has
   an enrollment, and creates a new pending payment on every click.
   Return "already enrolled" instead.

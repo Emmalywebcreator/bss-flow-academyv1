@@ -99,6 +99,11 @@ export default function RegisterPage() {
       });
       const data = await response.json();
 
+      if (data.alreadyEnrolled) {
+        router.push("/welcome");
+        return;
+      }
+
       if (!response.ok) {
         setError(data.error ?? "Could not start payment.");
         setStep("choose-path");

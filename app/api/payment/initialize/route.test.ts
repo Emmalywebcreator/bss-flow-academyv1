@@ -43,6 +43,25 @@ describe("POST /api/payment/initialize", () => {
     expect(paystackMock.initializeTransaction).not.toHaveBeenCalled();
   });
 
+  test("does not charge a student who is already enrolled", async () => {
+    supabaseMock.respond("registrations", { data: registration, error: null });
+    supabaseMock.respond("enrollments", { data: { id: "enrollment-1" }, error: null });
+
+    const response = await initialize();
+
+    expect(response.status).toBe(409);
+    expect(await response.json()).toEqual({
+      error: "You're already enrolled.",
+      alreadyEnrolled: true,
+    });
+    expect(response.headers.get("set-cookie")).toMatch(
+      new RegExp(`^bss_enrollment=${registrationId};.*HttpOnly`, "i")
+    );
+    expect(supabaseMock.calls("enrollments")).toContainEqual(["eq", "status", "active"]);
+    expect(supabaseMock.calls("payments")).toEqual([]);
+    expect(paystackMock.initializeTransaction).not.toHaveBeenCalled();
+  });
+
   test("charges the server-side price, ignoring any amount the client sends", async () => {
     supabaseMock.respond("registrations", { data: registration, error: null });
     paystackMock.initializeTransaction.mockResolvedValue({

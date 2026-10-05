@@ -3,12 +3,14 @@ import { NextResponse } from "next/server";
 import { paymentInitializeSchema } from "@/lib/schemas";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { initializeTransaction } from "@/lib/paystack";
+import { hasActiveEnrollment, setEnrollmentCookie } from "@/lib/enrollment-access";
 import { PROGRAM } from "@/constants/program";
 
 /**
  * Starts a Paystack transaction for the standard enrollment fee.
  * The amount always comes from PROGRAM.standardPrice — the client
- * cannot submit its own trusted price.
+ * cannot submit its own trusted price. Already-enrolled students are
+ * not charged.
  */
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -29,6 +31,18 @@ export async function POST(request: Request) {
 
   if (registrationError || !registration) {
     return NextResponse.json({ error: "Registration not found." }, { status: 404 });
+  }
+
+  // Never charge a student who is already enrolled (paid, or through a
+  // sponsor code); send them to the welcome page instead.
+  if (await hasActiveEnrollment(registrationId)) {
+    return setEnrollmentCookie(
+      NextResponse.json(
+        { error: "You're already enrolled.", alreadyEnrolled: true },
+        { status: 409 }
+      ),
+      registrationId
+    );
   }
 
   const amountKobo = PROGRAM.standardPrice * 100;
