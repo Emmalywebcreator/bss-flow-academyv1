@@ -105,6 +105,13 @@ tick each one off as it is merged.
   show the reference the student is told to quote to support.
   — `app/payment/callback/page.tsx:62-77`
 
+- [ ] **21. No support contact anywhere.** The callback and welcome pages
+  tell students to "contact support" in five places, but the app shows no
+  email, phone or WhatsApp number. A student charged without being
+  enrolled has no way to reach anyone. Needs the contact details from the
+  owner; then show them beside every "contact support" message.
+  — `app/payment/callback/page.tsx`, `app/welcome/page.tsx`
+
 ## P2 — Clean-up
 
 - [ ] **15. Price is defined in two places.** The `cohorts.price` column
