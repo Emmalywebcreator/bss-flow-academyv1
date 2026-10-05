@@ -57,7 +57,7 @@ tick each one off as it is merged.
   — `app/welcome/page.tsx`, the redirects in `app/register/page.tsx`
   and `app/payment/callback/page.tsx`
 
-- [ ] **7. No Paystack webhook.** If the student closes the tab after
+- [x] **7. No Paystack webhook.** If the student closes the tab after
   paying but before the callback page loads, the payment is never
   verified and they are never enrolled. Add `POST /api/payment/webhook`
   that checks the `x-paystack-signature` header and runs the same

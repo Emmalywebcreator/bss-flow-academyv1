@@ -72,6 +72,10 @@ In Vercel, set the same environment variables as `.env.local`
 (Project Settings → Environment Variables), with the hosted Supabase
 values and your live Paystack key.
 
+In the Paystack dashboard (Settings → API Keys & Webhooks), set the
+webhook URL to `https://<your-domain>/api/payment/webhook`, so students
+who close the tab right after paying are still enrolled.
+
 `db push` applies the migrations only — `seed.sql` is never pushed, so
 the hosted Cohort 1 starts with no sponsor code. Set a hard-to-guess
 code in the hosted project's SQL editor (never commit it to the repo):

@@ -36,6 +36,21 @@ The server verifies:
 
 Only verified transactions may result in paid enrollment.
 
+## POST /api/payment/webhook
+
+Receives Paystack webhook events.
+
+The server verifies the `x-paystack-signature` header (HMAC-SHA512 of
+the raw body with the Paystack secret key) and rejects unsigned or
+wrongly signed requests.
+
+On `charge.success`, the server verifies the transaction with Paystack
+exactly as `/api/payment/verify` does, then creates the paid enrollment.
+This enrolls students who paid but never reached the callback page.
+
+A non-200 response makes Paystack retry, so only failures on the
+server's side return one.
+
 ## Future endpoints
 
 Future versions may introduce:

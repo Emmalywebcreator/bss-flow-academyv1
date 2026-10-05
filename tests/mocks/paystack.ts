@@ -18,4 +18,5 @@ import { vi } from "vitest";
 export const paystackMock = {
   initializeTransaction: vi.fn(),
   verifyTransaction: vi.fn(),
+  isValidWebhookSignature: vi.fn(),
 };

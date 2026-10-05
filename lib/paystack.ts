@@ -1,3 +1,5 @@
+import { createHmac, timingSafeEqual } from "crypto";
+
 const PAYSTACK_BASE_URL = "https://api.paystack.co";
 
 function getSecretKey() {
@@ -83,4 +85,20 @@ export async function verifyTransaction(reference: string): Promise<PaystackVeri
   }
 
   return data.data as PaystackVerifyData;
+}
+
+/**
+ * Checks that a webhook really came from Paystack: Paystack signs the
+ * raw request body with HMAC-SHA512 using the secret key and sends the
+ * hex digest in the x-paystack-signature header.
+ */
+export function isValidWebhookSignature(rawBody: string, signature: string | null): boolean {
+  if (!signature) return false;
+
+  const expected = Buffer.from(
+    createHmac("sha512", getSecretKey()).update(rawBody).digest("hex")
+  );
+  const received = Buffer.from(signature);
+
+  return expected.length === received.length && timingSafeEqual(expected, received);
 }
