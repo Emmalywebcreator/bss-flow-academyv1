@@ -117,8 +117,8 @@ tick each one off as it is merged.
 - [x] **15. Price is defined in two places.** The `cohorts.price` column
   and `PROGRAM.standardPrice` are both 80000. Decided: `PROGRAM.standardPrice`
   is the source of truth; the unused column is dropped.
-- [ ] **16. `registrations.cohort_id` is never set.** Set it on
-  enrollment, or drop it from the schema and docs.
+- [x] **16. `registrations.cohort_id` is never set.** Decided: set it
+  at registration time and make it required.
 - [ ] **17. Duplicate registrations.** The same email can register
   repeatedly, and refreshing `/register` mid-flow starts over. Decide
   whether to reuse an existing registration by email.
