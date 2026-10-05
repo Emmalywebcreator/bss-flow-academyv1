@@ -10,6 +10,49 @@ function getSecretKey() {
   return key;
 }
 
+const REQUEST_TIMEOUT_MS = 10_000;
+
+/**
+ * Calls the Paystack API and returns its `data` field. Fails with a
+ * descriptive error (naming the endpoint, HTTP status and Paystack's
+ * message or the start of a non-JSON body) instead of a JSON parse
+ * error, and gives up after REQUEST_TIMEOUT_MS rather than hanging the
+ * request until the platform kills it.
+ */
+async function paystackRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetch(`${PAYSTACK_BASE_URL}${path}`, {
+      ...init,
+      headers: { ...init.headers, Authorization: `Bearer ${getSecretKey()}` },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  } catch (err) {
+    if (err instanceof Error && err.name === "TimeoutError") {
+      throw new Error(`Paystack ${path} timed out after ${REQUEST_TIMEOUT_MS / 1000}s.`);
+    }
+    throw new Error(`Paystack ${path} request failed: ${String(err)}`);
+  }
+
+  const text = await response.text();
+  let body: { status?: boolean; message?: string; data?: T } | undefined;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Paystack ${path} returned non-JSON (HTTP ${response.status}): ${text.slice(0, 200)}`
+    );
+  }
+
+  if (!response.ok || !body?.status) {
+    throw new Error(
+      `Paystack ${path} failed (HTTP ${response.status}): ${body?.message ?? "no message"}`
+    );
+  }
+
+  return body.data as T;
+}
+
 interface InitializeTransactionParams {
   email: string;
   amountKobo: number;
@@ -57,12 +100,9 @@ export async function initializeTransaction({
   callbackUrl,
   metadata,
 }: InitializeTransactionParams): Promise<PaystackInitializeData> {
-  const response = await fetch(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
+  return paystackRequest<PaystackInitializeData>("/transaction/initialize", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${getSecretKey()}`,
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
       amount: amountKobo,
@@ -71,14 +111,6 @@ export async function initializeTransaction({
       metadata,
     }),
   });
-
-  const data = await response.json();
-
-  if (!response.ok || !data.status) {
-    throw new Error(data.message ?? "Failed to initialize Paystack transaction.");
-  }
-
-  return data.data as PaystackInitializeData;
 }
 
 /**
@@ -86,18 +118,9 @@ export async function initializeTransaction({
  * a client-reported "payment succeeded" — always verify server-side.
  */
 export async function verifyTransaction(reference: string): Promise<PaystackVerifyData> {
-  const response = await fetch(
-    `${PAYSTACK_BASE_URL}/transaction/verify/${encodeURIComponent(reference)}`,
-    { headers: { Authorization: `Bearer ${getSecretKey()}` } }
+  return paystackRequest<PaystackVerifyData>(
+    `/transaction/verify/${encodeURIComponent(reference)}`
   );
-
-  const data = await response.json();
-
-  if (!response.ok || !data.status) {
-    throw new Error(data.message ?? "Failed to verify Paystack transaction.");
-  }
-
-  return data.data as PaystackVerifyData;
 }
 
 /**

@@ -123,7 +123,7 @@ tick each one off as it is merged.
   repeatedly, and refreshing `/register` mid-flow starts over. Decided:
   reuse an unenrolled registration with the same email (case-insensitive);
   stop an already-enrolled email with a message, without granting access.
-- [ ] **18. Paystack client robustness.** `response.json()` throws an
+- [x] **18. Paystack client robustness.** `response.json()` throws an
   unclear error on non-JSON responses, and `fetch` has no timeout.
   — `lib/paystack.ts`
 - [ ] **19. Enforce server-only imports.** Add `import "server-only"` to
