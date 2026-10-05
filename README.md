@@ -22,25 +22,32 @@ the schema, and `docs/api.md` for the API contract.
    npm install
    ```
 
-2. Copy the environment template and fill in real values:
+2. Start the local database (requires Docker — no Supabase account
+   needed for development):
+
+   ```bash
+   npm run db:start
+   ```
+
+   This runs Supabase locally and applies everything in
+   `supabase/migrations/`, then `supabase/seed.sql` (local-only data:
+   it sets the sponsor code `local-dev-code` so you can test sponsored
+   enrollment). Studio, the database UI, is at
+   [http://localhost:54323](http://localhost:54323).
+
+   `npm run db:reset` rebuilds the database from scratch; `npm run db:stop`
+   shuts it down.
+
+3. Copy the environment template and fill it in:
 
    ```bash
    cp .env.example .env.local
    ```
 
-   You'll need a Supabase project (URL + service role key) and a
-   Paystack account (secret key). See `.env.example` for the full list.
-
-3. Set up the database — run `supabase/schema.sql` in your Supabase
-   project's SQL editor. This creates `cohorts`, `registrations`,
-   `payments`, and `enrollments`, and seeds a `Cohort 1` row with no
-   sponsor code — sponsored enrollment is disabled until you set one.
-   Pick a hard-to-guess code and set it in the SQL editor (never commit
-   it to the repo):
-
-   ```sql
-   update cohorts set sponsor_code = '<your-secret-code>' where name = 'Cohort 1';
-   ```
+   For local development, take `SUPABASE_URL` (the "Project URL") and
+   `SUPABASE_SERVICE_ROLE_KEY` (the "Secret" key) from `npm run db:status`.
+   You'll also need a Paystack secret key — use a test key
+   (`sk_test_...`) in development.
 
 4. Run the dev server:
 
@@ -49,6 +56,23 @@ the schema, and `docs/api.md` for the API contract.
    ```
 
    Open [http://localhost:3000](http://localhost:3000).
+
+## Going live with a hosted Supabase project
+
+Create a project at [supabase.com](https://supabase.com), then:
+
+```bash
+npx supabase link --project-ref <your-project-ref>
+npx supabase db push
+```
+
+`db push` applies the migrations only — `seed.sql` is never pushed, so
+the hosted Cohort 1 starts with no sponsor code. Set a hard-to-guess
+code in the hosted project's SQL editor (never commit it to the repo):
+
+```sql
+update cohorts set sponsor_code = '<your-secret-code>' where name = 'Cohort 1';
+```
 
 ## Learner journey (V1)
 
@@ -72,7 +96,9 @@ separate concepts, isolated external services).
 - `lib/paystack.ts` — Paystack API helper
 - `lib/schemas.ts` — Zod request schemas
 - `lib/supabase/server.ts` — server-only Supabase client
-- `supabase/schema.sql` — database schema
+- `supabase/migrations/` — database schema, as ordered migrations
+- `supabase/seed.sql` — local-only development data
+- `supabase/config.toml` — local Supabase configuration
 
 ## What's not in V1
 

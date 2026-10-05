@@ -1,6 +1,6 @@
--- BSS Flow Academy — database schema
--- Matches docs/database.md. Run this in the Supabase SQL editor
--- (or via `supabase db push` once you have the CLI linked).
+-- BSS Flow Academy — initial database schema
+-- Matches docs/database.md. Applied automatically by `supabase start`
+-- locally, and by `supabase db push` to a linked hosted project.
 
 create extension if not exists "pgcrypto";
 
