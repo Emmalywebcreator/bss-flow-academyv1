@@ -46,32 +46,54 @@ export async function POST(request: Request) {
   const currencyMatches = transaction.currency === payment.currency;
 
   if (transaction.status !== "success" || !amountMatches || !currencyMatches) {
-    await supabase.from("payments").update({ status: "failed" }).eq("id", payment.id);
+    const { error: failedUpdateError } = await supabase
+      .from("payments")
+      .update({ status: "failed" })
+      .eq("id", payment.id);
+
+    if (failedUpdateError) {
+      console.error("payment failed-status update failed", failedUpdateError);
+      return NextResponse.json({ error: "Could not verify payment." }, { status: 500 });
+    }
+
     return NextResponse.json({ verified: false }, { status: 200 });
   }
 
-  await supabase
+  const { error: successUpdateError } = await supabase
     .from("payments")
     .update({ status: "success", paid_at: transaction.paid_at })
     .eq("id", payment.id);
 
-  const { data: cohort } = await supabase
+  if (successUpdateError) {
+    console.error("payment success-status update failed", successUpdateError);
+    return NextResponse.json({ error: "Could not verify payment." }, { status: 500 });
+  }
+
+  const { data: cohort, error: cohortError } = await supabase
     .from("cohorts")
     .select("id")
     .eq("name", PROGRAM.firstCohort)
     .maybeSingle();
 
-  if (cohort) {
-    // Concurrent verifies of the same reference must not create a
-    // second enrollment.
-    await supabase.from("enrollments").upsert(
-      {
-        registration_id: payment.registration_id,
-        cohort_id: cohort.id,
-        access_type: "paid",
-      },
-      { onConflict: "registration_id,cohort_id", ignoreDuplicates: true }
-    );
+  if (cohortError || !cohort) {
+    console.error("paid enrollment cohort lookup failed", cohortError ?? "cohort not found");
+    return NextResponse.json({ error: "Could not complete enrollment." }, { status: 500 });
+  }
+
+  // Concurrent verifies of the same reference must not create a
+  // second enrollment.
+  const { error: enrollmentError } = await supabase.from("enrollments").upsert(
+    {
+      registration_id: payment.registration_id,
+      cohort_id: cohort.id,
+      access_type: "paid",
+    },
+    { onConflict: "registration_id,cohort_id", ignoreDuplicates: true }
+  );
+
+  if (enrollmentError) {
+    console.error("paid enrollment failed", enrollmentError);
+    return NextResponse.json({ error: "Could not complete enrollment." }, { status: 500 });
   }
 
   return NextResponse.json({ verified: true }, { status: 200 });

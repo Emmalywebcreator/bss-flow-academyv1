@@ -24,7 +24,7 @@ tick each one off as it is merged.
   — `supabase/migrations/`, `app/api/payment/verify/route.ts`,
   `app/api/cohort/validate/route.ts`
 
-- [ ] **2. Payment verify ignores database errors.** The payment
+- [x] **2. Payment verify ignores database errors.** The payment
   `update` and enrollment `insert` results are never checked, so the
   route can return `verified: true` with no enrollment written.
   — `app/api/payment/verify/route.ts:51-73`
