@@ -128,4 +128,8 @@ tick each one off as it is merged.
   `lib/supabase/server.ts`, `lib/paystack.ts`, `lib/payments.ts` and
   `lib/enrollment-access.ts`, so importing them from client code fails
   the build.
-- [ ] **20. Tests for the callback and welcome pages.**
+- [x] **20. Tests for the callback and welcome pages.** Every callback
+  state (verifying, pending, failed, error, missing reference, the
+  `trxref` fallback, network failure, "Check again") and every welcome
+  outcome (no cookie, not enrolled, failed check, enrolled, missing
+  invite link), including the support link wherever it is shown.

@@ -38,6 +38,9 @@ test("hides the Telegram link from visitors without an enrollment cookie", async
 
   expect(screen.queryByRole("link", { name: /telegram/i })).toBeNull();
   expect(screen.getByRole("link", { name: /register/i }).getAttribute("href")).toBe("/register");
+  expect(screen.getByRole("link", { name: "admin@bssflow.cloud" }).getAttribute("href")).toBe(
+    "mailto:admin@bssflow.cloud"
+  );
   expect(supabaseMock.calls("enrollments")).toEqual([]);
 });
 
@@ -49,6 +52,23 @@ test("hides the Telegram link when the cookie has no active enrollment", async (
 
   expect(screen.queryByRole("link", { name: /telegram/i })).toBeNull();
   expect(supabaseMock.calls("enrollments")).toContainEqual(["eq", "status", "active"]);
+});
+
+test("hides the Telegram link when the enrollment check fails", async () => {
+  cookieValue.current = "not-a-uuid";
+  supabaseMock.respond("enrollments", {
+    data: null,
+    error: { message: 'invalid input syntax for type uuid: "not-a-uuid"' },
+  });
+
+  render(await WelcomePage());
+
+  expect(screen.queryByRole("link", { name: /telegram/i })).toBeNull();
+  expect(screen.getByText(/couldn.t find your enrollment/)).toBeDefined();
+  expect(console.error).toHaveBeenCalledWith(
+    "enrollment access check failed",
+    expect.anything()
+  );
 });
 
 test("shows the Telegram link to an enrolled student", async () => {

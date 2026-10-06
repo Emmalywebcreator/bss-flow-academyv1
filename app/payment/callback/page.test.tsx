@@ -79,6 +79,9 @@ test("lets the student check again after an error, then continues once verified"
 
   expect(await screen.findByText(/went wrong while verifying/)).toBeDefined();
   expect(screen.getByText("bss-ref")).toBeDefined();
+  expect(screen.getByRole("link", { name: "admin@bssflow.cloud" }).getAttribute("href")).toBe(
+    "mailto:admin@bssflow.cloud"
+  );
 
   fireEvent.click(screen.getByRole("button", { name: "Check again" }));
 
@@ -93,6 +96,46 @@ test("explains a missing reference without calling the server", async () => {
   render(<PaymentCallbackPage />);
 
   expect(await screen.findByText(/missing a payment reference/)).toBeDefined();
+  expect(screen.getByRole("link", { name: "admin@bssflow.cloud" }).getAttribute("href")).toBe(
+    "mailto:admin@bssflow.cloud"
+  );
   expect(screen.getByRole("link", { name: "Back to registration" })).toBeDefined();
   expect(vi.mocked(fetch)).not.toHaveBeenCalled();
+});
+
+test("accepts Paystack's trxref parameter when reference is missing", async () => {
+  query.current = "trxref=bss-trx";
+  verifyResponds({ body: { verified: true } });
+
+  render(<PaymentCallbackPage />);
+
+  expect(screen.getByText("Verifying your payment...")).toBeDefined();
+  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/welcome"));
+  expect(vi.mocked(fetch)).toHaveBeenCalledWith(
+    "/api/payment/verify",
+    expect.objectContaining({ body: JSON.stringify({ reference: "bss-trx" }) })
+  );
+});
+
+test("treats a network failure as a retryable error", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+
+  render(<PaymentCallbackPage />);
+
+  expect(await screen.findByText(/went wrong while verifying/)).toBeDefined();
+  expect(screen.getByRole("button", { name: "Check again" })).toBeDefined();
+  expect(replace).not.toHaveBeenCalled();
+});
+
+test("lets the student check a processing payment again until it is verified", async () => {
+  verifyResponds({ body: { verified: false, pending: true } }, { body: { verified: true } });
+
+  render(<PaymentCallbackPage />);
+
+  expect(await screen.findByText("Your payment is still processing.")).toBeDefined();
+
+  fireEvent.click(screen.getByRole("button", { name: "Check again" }));
+
+  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/welcome"));
+  expect(vi.mocked(fetch)).toHaveBeenCalledTimes(2);
 });
