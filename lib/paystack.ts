@@ -1,3 +1,4 @@
+import "server-only";
 import { createHmac, timingSafeEqual } from "crypto";
 
 const PAYSTACK_BASE_URL = "https://api.paystack.co";

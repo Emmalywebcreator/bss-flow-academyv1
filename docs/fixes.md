@@ -126,7 +126,8 @@ tick each one off as it is merged.
 - [x] **18. Paystack client robustness.** `response.json()` throws an
   unclear error on non-JSON responses, and `fetch` has no timeout.
   — `lib/paystack.ts`
-- [ ] **19. Enforce server-only imports.** Add `import "server-only"` to
-  `lib/supabase/server.ts` and `lib/paystack.ts` so the service-role
-  client can never be bundled into the browser.
+- [x] **19. Enforce server-only imports.** Added `import "server-only"` to
+  `lib/supabase/server.ts`, `lib/paystack.ts`, `lib/payments.ts` and
+  `lib/enrollment-access.ts`, so importing them from client code fails
+  the build.
 - [ ] **20. Tests for the callback and welcome pages.**

@@ -1,3 +1,4 @@
+import "server-only";
 import type { NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 
