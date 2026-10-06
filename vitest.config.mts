@@ -19,5 +19,8 @@ export default defineConfig({
     include: ["**/*.test.{ts,tsx}"],
     exclude: ["node_modules/**", ".next/**"],
     restoreMocks: true,
+    // The first jsdom test in a file pays the environment and first-render
+    // cost, which can pass the 5s default on slower machines.
+    testTimeout: 15000,
   },
 });
