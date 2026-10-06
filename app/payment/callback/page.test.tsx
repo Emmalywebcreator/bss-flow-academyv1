@@ -61,6 +61,9 @@ test("on a failed payment, shows the reference and a way back to registration", 
 
   expect(await screen.findByText(/couldn.t confirm this payment/)).toBeDefined();
   expect(screen.getByText("bss-ref")).toBeDefined();
+  expect(screen.getByRole("link", { name: "admin@bssflow.cloud" }).getAttribute("href")).toBe(
+    "mailto:admin@bssflow.cloud"
+  );
   expect(screen.getByRole("link", { name: "Back to registration" }).getAttribute("href")).toBe(
     "/register"
   );

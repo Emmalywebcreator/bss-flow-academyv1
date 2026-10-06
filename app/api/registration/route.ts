@@ -85,7 +85,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "This email is already enrolled. Open the welcome page on the device you enrolled with, or contact support.",
+            `This email is already enrolled. Open the welcome page on the device you enrolled with, or contact support at ${PROGRAM.supportEmail}.`,
         },
         { status: 409 }
       );

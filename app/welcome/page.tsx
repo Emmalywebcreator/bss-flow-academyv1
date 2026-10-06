@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { PROGRAM } from "@/constants/program";
+import { SupportEmail } from "@/app/support-email";
 import { ENROLLMENT_COOKIE, hasActiveEnrollment } from "@/lib/enrollment-access";
 
 /**
@@ -21,7 +22,7 @@ export default async function WelcomePage() {
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400">
             This page is for enrolled {PROGRAM.firstCohort} students. If you enrolled on another
-            device or browser, open this page there, or contact support.
+            device or browser, open this page there, or contact support at <SupportEmail />.
           </p>
           <Link
             href="/register"
@@ -61,7 +62,8 @@ export default async function WelcomePage() {
           </Link>
         ) : (
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            The community link isn&apos;t available right now. Please contact support to get it.
+            The community link isn&apos;t available right now. Please contact support at{" "}
+            <SupportEmail /> to get it.
           </p>
         )}
       </div>

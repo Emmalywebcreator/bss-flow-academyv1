@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { SupportEmail } from "@/app/support-email";
 
 type Status = "verifying" | "success" | "pending" | "failed" | "error";
 
@@ -100,8 +101,8 @@ function CallbackContent() {
               We couldn&apos;t confirm this payment.
             </p>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              If money left your account, contact support with the reference below before trying
-              again. Otherwise, you can go back and try paying again.
+              If money left your account, contact support at <SupportEmail /> with the reference
+              below before trying again. Otherwise, you can go back and try paying again.
             </p>
             {referenceNote}
             <Link href="/register" className={`mt-2 ${primaryButton}`}>
@@ -116,7 +117,8 @@ function CallbackContent() {
             </p>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
               This is usually temporary, and checking again won&apos;t charge you twice. If it keeps
-              happening, contact support with the reference below.
+              happening, contact support at <SupportEmail /> with the
+              reference below.
             </p>
             {referenceNote}
             <button onClick={checkAgain} className={`mt-2 ${primaryButton}`}>
@@ -131,7 +133,7 @@ function CallbackContent() {
             </p>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
               It should open automatically after you pay on Paystack. If you&apos;ve paid, contact
-              support with the reference from your Paystack receipt.
+              support at <SupportEmail /> with the reference from your Paystack receipt.
             </p>
             <Link href="/register" className={`mt-2 ${secondaryButton}`}>
               Back to registration

@@ -76,4 +76,7 @@ test("asks an enrolled student to contact support if the invite link isn't confi
 
   expect(screen.queryByRole("link", { name: /telegram/i })).toBeNull();
   expect(screen.getByText(/contact support/i)).toBeDefined();
+  expect(screen.getByRole("link", { name: "admin@bssflow.cloud" }).getAttribute("href")).toBe(
+    "mailto:admin@bssflow.cloud"
+  );
 });
