@@ -61,3 +61,14 @@ test("sends an already-enrolled student to the welcome page instead of Paystack"
   await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/welcome"));
   expect(vi.mocked(fetch)).toHaveBeenLastCalledWith("/api/payment/initialize", expect.anything());
 });
+
+test("registration form links to the terms and privacy policy", () => {
+  render(<RegisterPage />);
+
+  expect(screen.getByRole("link", { name: "Terms and Conditions" }).getAttribute("href")).toBe(
+    "/terms"
+  );
+  expect(screen.getByRole("link", { name: "Privacy Policy" }).getAttribute("href")).toBe(
+    "/privacy"
+  );
+});

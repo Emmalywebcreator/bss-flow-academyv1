@@ -13,10 +13,28 @@ export default function Home() {
         </h1>
         <p className="text-lg text-zinc-600 dark:text-zinc-400">{PROGRAM.tagline}</p>
         <p className="max-w-md text-base text-zinc-600 dark:text-zinc-400">
-          A hands-on web development training program. Register below to
+          A hands-on training program in {PROGRAM.topic.toLowerCase()}. Register below to
           join {PROGRAM.firstCohort} — with a sponsored code or a one-time
           fee of &#8358;{PROGRAM.standardPrice.toLocaleString()}.
         </p>
+        <dl className="grid w-full max-w-md grid-cols-2 gap-4 text-left sm:grid-cols-4">
+          {[
+            ["Starts", PROGRAM.firstCohortStart],
+            ["Duration", PROGRAM.duration],
+            ["Format", PROGRAM.format],
+            ["Fee", `₦${PROGRAM.standardPrice.toLocaleString()}`],
+          ].map(([label, value]) => (
+            <div
+              key={label}
+              className="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950"
+            >
+              <dt className="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                {label}
+              </dt>
+              <dd className="mt-1 text-sm font-medium text-zinc-950 dark:text-zinc-50">{value}</dd>
+            </div>
+          ))}
+        </dl>
         <Link
           href="/register"
           className="rounded-full bg-zinc-950 px-8 py-3 text-base font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"

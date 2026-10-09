@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PROGRAM } from "@/constants/program";
 import { experienceLevels } from "@/lib/schemas";
@@ -197,6 +198,18 @@ export default function RegisterPage() {
             >
               {submitting ? "Submitting..." : "Continue"}
             </button>
+
+            <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
+              By registering, you agree to our{" "}
+              <Link href="/terms" className="underline">
+                Terms and Conditions
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="underline">
+                Privacy Policy
+              </Link>
+              .
+            </p>
           </form>
         )}
 

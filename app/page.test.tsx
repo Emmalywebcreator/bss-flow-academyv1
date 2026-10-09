@@ -14,3 +14,12 @@ test("landing page shows the program name and links to registration", () => {
     "/register"
   );
 });
+
+test("landing page shows the cohort details", () => {
+  render(<Home />);
+
+  expect(screen.getByText(PROGRAM.firstCohortStart)).toBeDefined();
+  expect(screen.getByText(PROGRAM.duration)).toBeDefined();
+  expect(screen.getByText(PROGRAM.format)).toBeDefined();
+  expect(screen.getByText(`₦${PROGRAM.standardPrice.toLocaleString()}`)).toBeDefined();
+});
