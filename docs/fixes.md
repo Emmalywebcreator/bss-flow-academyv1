@@ -80,12 +80,12 @@ tick each one off as it is merged.
   — `app/terms/`, `app/privacy/`, `app/refund-policy/`,
   `app/site-footer.tsx`, `constants/program.ts`
 
-- [ ] **23. Go live.** Done: live `PAYSTACK_SECRET_KEY` set in Vercel,
-  live webhook (`/api/payment/webhook`) set in Paystack. Still to do:
-  set `APP_URL` to the main domain and `TELEGRAM_INVITE_LINK` to the
-  real Cohort 1 invite in Vercel, redeploy, then make one live payment
-  (refund it from the Paystack dashboard) and confirm `/welcome`, the
-  `success` payment and the enrollment.
+- [ ] **23. Go live.** Done: live `PAYSTACK_SECRET_KEY`, `APP_URL` (main
+  domain) and `TELEGRAM_INVITE_LINK` (real Cohort 1 invite) set in
+  Vercel and redeployed; live webhook (`/api/payment/webhook`) set in
+  Paystack. Still to do: make one live payment (refund it from the
+  Paystack dashboard) and confirm `/welcome`, the `success` payment and
+  the enrollment.
 
 ## P1 — Should fix before launch
 
