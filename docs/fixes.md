@@ -69,6 +69,16 @@ tick each one off as it is merged.
   of `constants/program.ts` in fix 6, because that file is bundled into
   the browser). Set in `.env.local` and in Vercel.
 
+- [x] **22. Paystack compliance.** Paystack needs public business details
+  before it will approve the account. Added Terms and Conditions, Privacy
+  Policy and Refund Policy pages, a footer on every page with the policy
+  links, contact email, phone, operator name and location, the cohort
+  details on the landing page, and a terms notice on the registration
+  form. Still to do: set `PAYSTACK_SECRET_KEY` (test key) and `APP_URL`
+  in Vercel and redeploy, then do a test payment on the live site.
+  — `app/terms/`, `app/privacy/`, `app/refund-policy/`,
+  `app/site-footer.tsx`, `constants/program.ts`
+
 ## P1 — Should fix before launch
 
 - [x] **9. Tests for the payment routes.** `payment/initialize` and
