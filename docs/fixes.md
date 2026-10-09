@@ -74,10 +74,18 @@ tick each one off as it is merged.
   Policy and Refund Policy pages, a footer on every page with the policy
   links, contact email, phone, operator name and location, the cohort
   details on the landing page, and a terms notice on the registration
-  form. Still to do: set `PAYSTACK_SECRET_KEY` (test key) and `APP_URL`
-  in Vercel and redeploy, then do a test payment on the live site.
+  form. Paystack pre-approved the account on 2026-10-09. A test payment
+  and a sponsor-code enrollment on the deployed site both reached
+  Supabase.
   — `app/terms/`, `app/privacy/`, `app/refund-policy/`,
   `app/site-footer.tsx`, `constants/program.ts`
+
+- [ ] **23. Go live.** Done: live `PAYSTACK_SECRET_KEY` set in Vercel,
+  live webhook (`/api/payment/webhook`) set in Paystack. Still to do:
+  set `APP_URL` to the main domain and `TELEGRAM_INVITE_LINK` to the
+  real Cohort 1 invite in Vercel, redeploy, then make one live payment
+  (refund it from the Paystack dashboard) and confirm `/welcome`, the
+  `success` payment and the enrollment.
 
 ## P1 — Should fix before launch
 
