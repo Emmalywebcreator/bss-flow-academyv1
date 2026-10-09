@@ -13,7 +13,7 @@ export default function Home() {
         </h1>
         <p className="text-lg text-zinc-600 dark:text-zinc-400">{PROGRAM.tagline}</p>
         <p className="max-w-md text-base text-zinc-600 dark:text-zinc-400">
-          A hands-on training program in {PROGRAM.topic.toLowerCase()}. Register below to
+          A hands-on training program in {PROGRAM.topic}. Register below to
           join {PROGRAM.firstCohort} — with a sponsored code or a one-time
           fee of &#8358;{PROGRAM.standardPrice.toLocaleString()}.
         </p>

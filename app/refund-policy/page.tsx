@@ -5,6 +5,7 @@ import { SupportEmail } from "@/app/support-email";
 
 export const metadata: Metadata = {
   title: `Refund Policy — ${PROGRAM.name}`,
+  description: `When you can get a refund of the ${PROGRAM.name} enrollment fee, and how to ask for one.`,
 };
 
 export default function RefundPolicyPage() {

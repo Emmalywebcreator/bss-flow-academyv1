@@ -6,7 +6,7 @@ export const PROGRAM = {
   // amount charged (payment/initialize) and the price shown on the site.
   standardPrice: 80000,
   firstCohort: "Cohort 1",
-  topic: "Web development with AI",
+  topic: "Web Development with AI",
   firstCohortStart: "15 October 2026",
   duration: "6 weeks",
   format: "Online",

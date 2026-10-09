@@ -5,6 +5,7 @@ import { SupportEmail } from "@/app/support-email";
 
 export const metadata: Metadata = {
   title: `Privacy Policy — ${PROGRAM.name}`,
+  description: `What personal data ${PROGRAM.name} collects, why, who it is shared with and how to exercise your rights.`,
 };
 
 export default function PrivacyPage() {

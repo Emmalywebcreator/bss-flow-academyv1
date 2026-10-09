@@ -6,6 +6,7 @@ import { SupportEmail } from "@/app/support-email";
 
 export const metadata: Metadata = {
   title: `Terms and Conditions — ${PROGRAM.name}`,
+  description: `The terms for registering for and taking part in ${PROGRAM.name}, including fees, sponsored places and course materials.`,
 };
 
 export default function TermsPage() {
@@ -21,7 +22,7 @@ export default function TermsPage() {
 
       <h2>The program</h2>
       <p>
-        {PROGRAM.name} runs {PROGRAM.topic.toLowerCase()} training in cohorts. Each cohort is a{" "}
+        {PROGRAM.name} runs {PROGRAM.topic} training in cohorts. Each cohort is a{" "}
         {PROGRAM.duration} {PROGRAM.format.toLowerCase()} program. {PROGRAM.firstCohort} starts on{" "}
         {PROGRAM.firstCohortStart}. Session times, links and announcements are shared in the
         cohort&apos;s Telegram community. We may adjust the schedule or content to improve the

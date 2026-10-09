@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteFooter } from "@/app/site-footer";
+import { PROGRAM } from "@/constants/program";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BSS Flow Academy — Registration",
-  description: "Register for BSS Flow Academy's first web development cohort.",
+  title: `${PROGRAM.name} — ${PROGRAM.topic}`,
+  description: `A ${PROGRAM.duration} ${PROGRAM.format.toLowerCase()} training program in ${PROGRAM.topic}. ${PROGRAM.firstCohort} starts on ${PROGRAM.firstCohortStart}.`,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
