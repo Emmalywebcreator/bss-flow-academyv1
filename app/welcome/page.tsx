@@ -21,15 +21,23 @@ export default async function WelcomePage() {
             We couldn&apos;t find your enrollment
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400">
-            This page is for enrolled {PROGRAM.firstCohort} students. If you enrolled on another
-            device or browser, open this page there, or contact support at <SupportEmail />.
+            This page is for enrolled learners. If you&apos;ve already enrolled, log in with the
+            email you registered with. Need help? Contact support at <SupportEmail />.
           </p>
-          <Link
-            href="/register"
-            className="rounded-full bg-zinc-950 px-8 py-3 text-base font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
-          >
-            Register for {PROGRAM.firstCohort}
-          </Link>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href="/login"
+              className="rounded-full bg-zinc-950 px-8 py-3 text-base font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/register"
+              className="rounded-full border border-zinc-300 px-8 py-3 text-base font-medium text-zinc-950 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-50 dark:hover:bg-zinc-900"
+            >
+              Register
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -66,6 +74,11 @@ export default async function WelcomePage() {
             <SupportEmail /> to get it.
           </p>
         )}
+        <form action="/api/logout" method="post">
+          <button type="submit" className="text-sm text-zinc-500 underline dark:text-zinc-400">
+            Log out on this device
+          </button>
+        </form>
       </div>
     </div>
   );

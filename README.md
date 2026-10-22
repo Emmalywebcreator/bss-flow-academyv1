@@ -50,6 +50,8 @@ the schema, and `docs/api.md` for the API contract.
    (`sk_test_...`) in development.
    Set `TELEGRAM_INVITE_LINK` to the community invite; it is shown
    only to enrolled students, on the welcome page.
+   Leave `RESEND_API_KEY` empty locally: login codes are then printed
+   to the dev server console instead of emailed.
 
 4. Run the dev server:
 
@@ -71,6 +73,12 @@ npx supabase db push
 In Vercel, set the same environment variables as `.env.local`
 (Project Settings → Environment Variables), with the hosted Supabase
 values and your live Paystack key.
+
+For login codes, add your domain in Resend (Domains → Add domain) and
+create the DNS records it lists; your existing mail records stay as
+they are. Then set `RESEND_API_KEY` and `EMAIL_FROM` (an address on
+that domain) in Vercel. Without them, login in production fails with
+"Could not send a login code".
 
 In the Paystack dashboard (Settings → API Keys & Webhooks), set the
 webhook URL to `https://<your-domain>/api/payment/webhook`, so students
@@ -107,11 +115,16 @@ separate concepts, isolated external services).
 - `app/register/page.tsx` — registration form + cohort code / payment choice
 - `app/payment/callback/page.tsx` — Paystack redirect target, verifies payment
 - `app/welcome/page.tsx` — post-enrollment success page
+- `app/login/page.tsx` — log in with an emailed code, on any device
+- `app/api/login/request/route.ts` — emails an enrolled student a login code
+- `app/api/login/verify/route.ts` — checks the code, sets the enrollment cookie
+- `app/api/logout/route.ts` — clears the enrollment cookie
 - `app/api/registration/route.ts` — creates a registration
 - `app/api/cohort/validate/route.ts` — validates a sponsor code, creates sponsored enrollment
 - `app/api/payment/initialize/route.ts` — starts a Paystack transaction
 - `app/api/payment/verify/route.ts` — verifies a Paystack transaction, creates paid enrollment
 - `lib/paystack.ts` — Paystack API helper
+- `lib/email.ts` — sends login code emails through Resend
 - `lib/schemas.ts` — Zod request schemas
 - `lib/supabase/server.ts` — server-only Supabase client
 - `supabase/migrations/` — database schema, as ordered migrations

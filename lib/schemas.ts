@@ -25,3 +25,12 @@ export const paymentInitializeSchema = z.object({
 export const paymentVerifySchema = z.object({
   reference: z.string().trim().min(1, "A payment reference is required."),
 });
+
+export const loginRequestSchema = z.object({
+  email: z.string().trim().email("Enter a valid email address.").toLowerCase(),
+});
+
+export const loginVerifySchema = z.object({
+  email: z.string().trim().email("Enter a valid email address.").toLowerCase(),
+  code: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code."),
+});

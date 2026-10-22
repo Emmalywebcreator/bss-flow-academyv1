@@ -24,6 +24,12 @@ export function setEnrollmentCookie(response: NextResponse, registrationId: stri
   return response;
 }
 
+/** Call on the response of the logout route. */
+export function clearEnrollmentCookie(response: NextResponse) {
+  response.cookies.delete(ENROLLMENT_COOKIE);
+  return response;
+}
+
 /** Whether the registration has an active enrollment. */
 export async function hasActiveEnrollment(registrationId: string | undefined) {
   if (!registrationId) return false;

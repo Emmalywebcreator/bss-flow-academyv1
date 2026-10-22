@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" updated="9 October 2026">
+    <LegalPage title="Privacy Policy" updated="22 October 2026">
       <p>
         {PROGRAM.name} is run by {PROGRAM.operator} from {PROGRAM.location}, who is responsible for
         your personal data. This policy explains what we collect and why, in line with the Nigeria
@@ -32,8 +32,8 @@ export default function PrivacyPage() {
           or a sponsor code.
         </li>
         <li>
-          <strong>Security data:</strong> your IP address when you enter a sponsor code, used only to
-          limit repeated guessing.
+          <strong>Security data:</strong> your IP address when you enter a sponsor code or log in,
+          used only to limit repeated guessing.
         </li>
       </ul>
 
@@ -59,6 +59,9 @@ export default function PrivacyPage() {
           <strong>Supabase</strong> — stores our database (servers in the United States).
         </li>
         <li>
+          <strong>Resend</strong> — sends the login codes you request by email.
+        </li>
+        <li>
           <strong>Vercel</strong> — hosts this website.
         </li>
         <li>
@@ -75,8 +78,8 @@ export default function PrivacyPage() {
 
       <h2>Cookies</h2>
       <p>
-        We set one cookie, <code>bss_enrollment</code>, after you enroll. It lets the welcome page
-        confirm your enrollment, and it expires after 90 days. We don&apos;t use advertising or
+        We set one cookie, <code>bss_enrollment</code>, after you enroll or log in. It lets the
+        welcome page confirm your enrollment, and it expires after 90 days or when you log out. We don&apos;t use advertising or
         tracking cookies.
       </p>
 

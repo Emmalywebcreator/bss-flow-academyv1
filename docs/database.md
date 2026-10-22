@@ -47,6 +47,33 @@ Fields:
 - access_granted_at
 - created_at
 
+### login_codes
+
+Emailed login codes for enrolled students. Only the SHA-256 hash of a
+code is stored. Rows older than a day are pruned.
+
+Fields:
+
+- id
+- registration_id
+- code_hash
+- attempts
+- expires_at
+- used_at
+- created_at
+
+### login_attempts
+
+Login code requests and checks, kept for a day for rate limiting.
+
+Fields:
+
+- id
+- kind (`request` or `verify`)
+- ip
+- email
+- created_at
+
 ## Enrollment access types
 
 - paid

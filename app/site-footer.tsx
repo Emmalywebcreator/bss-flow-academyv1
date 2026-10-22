@@ -1,33 +1,62 @@
 import Link from "next/link";
 import { PROGRAM } from "@/constants/program";
-import { SupportEmail } from "@/app/support-email";
+import { NAV_LINKS } from "@/app/nav-links";
 
-/** Contact details and policy links, shown on every page. */
+const linkClass = "hover:text-zinc-950 dark:hover:text-zinc-50";
+
+/** Navigation, contact details and policy links, shown on every page. */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-zinc-200 bg-zinc-50 px-6 py-8 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-black dark:text-zinc-400">
-      <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
-        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-          <Link href="/terms" className="hover:text-zinc-950 dark:hover:text-zinc-50">
+    <footer className="border-t border-zinc-200 bg-zinc-50 px-4 py-12 text-sm text-zinc-600 sm:px-6 dark:border-zinc-800 dark:bg-black dark:text-zinc-400">
+      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-col gap-2">
+          <p className="font-semibold text-zinc-950 dark:text-zinc-50">{PROGRAM.name}</p>
+          <p>{PROGRAM.tagline}</p>
+        </div>
+
+        <nav aria-label="Footer" className="flex flex-col gap-2">
+          <h2 className="font-medium text-zinc-950 dark:text-zinc-50">Learn</h2>
+          {NAV_LINKS.slice(1).map((link) => (
+            <Link key={link.href} href={link.href} className={linkClass}>
+              {link.label}
+            </Link>
+          ))}
+          <Link href="/register" className={linkClass}>
+            Register
+          </Link>
+          <Link href="/login" className={linkClass}>
+            Log in
+          </Link>
+        </nav>
+
+        <nav aria-label="Policies" className="flex flex-col gap-2">
+          <h2 className="font-medium text-zinc-950 dark:text-zinc-50">Policies</h2>
+          <Link href="/terms" className={linkClass}>
             Terms and Conditions
           </Link>
-          <Link href="/privacy" className="hover:text-zinc-950 dark:hover:text-zinc-50">
+          <Link href="/privacy" className={linkClass}>
             Privacy Policy
           </Link>
-          <Link href="/refund-policy" className="hover:text-zinc-950 dark:hover:text-zinc-50">
+          <Link href="/refund-policy" className={linkClass}>
             Refund Policy
           </Link>
         </nav>
-        <p>
-          Contact: <SupportEmail /> &middot;{" "}
-          <a href={PROGRAM.supportPhoneLink} className="hover:text-zinc-950 dark:hover:text-zinc-50">
+
+        <div className="flex flex-col gap-2">
+          <h2 className="font-medium text-zinc-950 dark:text-zinc-50">Contact</h2>
+          <a href={`mailto:${PROGRAM.supportEmail}`} className={linkClass}>
+            {PROGRAM.supportEmail}
+          </a>
+          <a href={PROGRAM.supportPhoneLink} className={linkClass}>
             {PROGRAM.supportPhone}
           </a>
-        </p>
-        <p>
-          &copy; 2026 {PROGRAM.name} &middot; Run by {PROGRAM.operator} &middot; {PROGRAM.location}
-        </p>
+          <p>{PROGRAM.location}</p>
+        </div>
       </div>
+
+      <p className="mx-auto mt-10 max-w-6xl border-t border-zinc-200 pt-6 dark:border-zinc-800">
+        &copy; 2026 {PROGRAM.name} &middot; Run by {PROGRAM.operator}
+      </p>
     </footer>
   );
 }
