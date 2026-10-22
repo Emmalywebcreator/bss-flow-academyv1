@@ -80,12 +80,13 @@ export async function POST(request: Request) {
     }
 
     // Typing an email is not proof of identity, so this doesn't grant
-    // welcome-page access — that comes only from the enrollment cookie.
+    // welcome-page access — that comes only from the enrollment cookie,
+    // set after enrolling or after logging in with an emailed code.
     if (enrollment) {
       return NextResponse.json(
         {
           error:
-            `This email is already enrolled. Open the welcome page on the device you enrolled with, or contact support at ${PROGRAM.supportEmail}.`,
+            `This email is already enrolled. Log in at /login with a code sent to this email, or contact support at ${PROGRAM.supportEmail}.`,
         },
         { status: 409 }
       );

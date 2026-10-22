@@ -51,6 +51,30 @@ This enrolls students who paid but never reached the callback page.
 A non-200 response makes Paystack retry, so only failures on the
 server's side return one.
 
+## POST /api/login/request
+
+Emails a 6-digit login code to an enrolled student.
+
+The server creates a code only for an email with an active enrollment,
+but answers `{ sent: true }` either way, so the endpoint can't reveal
+who has registered. Only the code's SHA-256 hash is stored.
+
+Limits: 3 requests per email and 10 per IP in any 15 minutes (429).
+
+## POST /api/login/verify
+
+Checks an emailed login code and sets the enrollment cookie.
+
+A code lasts 10 minutes, works once, stops working after 5 wrong tries,
+and only logs in an enrollment that is still active. A new code
+replaces any earlier unused one.
+
+Limit: 20 checks per IP in any 15 minutes (429).
+
+## POST /api/logout
+
+Clears the enrollment cookie and redirects (303) to the homepage.
+
 ## Future endpoints
 
 Future versions may introduce:

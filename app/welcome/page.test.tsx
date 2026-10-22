@@ -38,6 +38,7 @@ test("hides the Telegram link from visitors without an enrollment cookie", async
 
   expect(screen.queryByRole("link", { name: /telegram/i })).toBeNull();
   expect(screen.getByRole("link", { name: /register/i }).getAttribute("href")).toBe("/register");
+  expect(screen.getByRole("link", { name: "Log in" }).getAttribute("href")).toBe("/login");
   expect(screen.getByRole("link", { name: "admin@bssflow.cloud" }).getAttribute("href")).toBe(
     "mailto:admin@bssflow.cloud"
   );
@@ -80,6 +81,9 @@ test("shows the Telegram link to an enrolled student", async () => {
   expect(
     screen.getByRole("link", { name: "Join the Telegram community" }).getAttribute("href")
   ).toBe(inviteLink);
+  expect(screen.getByRole("button", { name: "Log out on this device" }).closest("form")!.getAttribute("action")).toBe(
+    "/api/logout"
+  );
   expect(supabaseMock.calls("enrollments")).toContainEqual([
     "eq",
     "registration_id",
