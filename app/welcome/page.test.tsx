@@ -104,3 +104,32 @@ test("asks an enrolled student to contact support if the invite link isn't confi
     "mailto:admin@bssflow.cloud"
   );
 });
+
+test("greets an enrolled learner and recommends Foundations for beginners", async () => {
+  cookieValue.current = registrationId;
+  supabaseMock.respond("enrollments", { data: { id: "enrollment-1" }, error: null });
+  supabaseMock.respond("registrations", { data: { full_name: "Ada Lovelace" }, error: null });
+
+  render(await WelcomePage());
+
+  expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+    "Welcome, Ada. Where would you like to start?"
+  );
+  const foundations = screen.getByRole("heading", { name: "Foundations" }).closest("article")!;
+  expect(foundations.textContent).toContain("Recommended for beginners");
+  expect(foundations.textContent).toContain("Lesson 1: How the Internet and Websites Work");
+  expect(foundations.querySelector("a")).toBeNull();
+  expect(screen.getAllByText("Planned")).toHaveLength(3);
+});
+
+test("still welcomes the learner if their name can't be read", async () => {
+  cookieValue.current = registrationId;
+  supabaseMock.respond("enrollments", { data: { id: "enrollment-1" }, error: null });
+  supabaseMock.respond("registrations", { data: null, error: { message: "unavailable" } });
+
+  render(await WelcomePage());
+
+  expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+    "Welcome. Where would you like to start?"
+  );
+});

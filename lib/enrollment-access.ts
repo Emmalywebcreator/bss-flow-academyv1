@@ -30,6 +30,19 @@ export function clearEnrollmentCookie(response: NextResponse) {
   return response;
 }
 
+/** The learner's first name, for greeting them; null if it can't be read. */
+export async function getLearnerFirstName(registrationId: string) {
+  const { data, error } = await getSupabaseServerClient()
+    .from("registrations")
+    .select("full_name")
+    .eq("id", registrationId)
+    .maybeSingle();
+
+  if (error) console.error("learner name lookup failed", error);
+  const fullName = (data as { full_name?: string } | null)?.full_name?.trim();
+  return fullName ? fullName.split(/\s+/)[0] : null;
+}
+
 /** Whether the registration has an active enrollment. */
 export async function hasActiveEnrollment(registrationId: string | undefined) {
   if (!registrationId) return false;
