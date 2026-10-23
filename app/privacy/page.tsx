@@ -79,7 +79,7 @@ export default function PrivacyPage() {
       <h2>Cookies</h2>
       <p>
         We set one cookie, <code>bss_enrollment</code>, after you enroll or log in. It lets the
-        welcome page confirm your enrollment, and it expires after 90 days or when you log out. We don&apos;t use advertising or
+        learning page confirm your enrollment, and it expires after 90 days or when you log out. We don&apos;t use advertising or
         tracking cookies.
       </p>
 

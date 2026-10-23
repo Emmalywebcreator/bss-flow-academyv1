@@ -89,7 +89,7 @@ describe("POST /api/registration", () => {
     );
   });
 
-  test("stops an already-enrolled email without granting welcome access", async () => {
+  test("stops an already-enrolled email without granting learning-page access", async () => {
     cohortExists();
     existingRegistrations("reg-123");
     supabaseMock.respond("enrollments", { data: { id: "enrollment-1" }, error: null });

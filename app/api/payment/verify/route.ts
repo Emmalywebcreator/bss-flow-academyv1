@@ -6,7 +6,7 @@ import { verifyAndEnroll } from "@/lib/payments";
 /**
  * Called by the payment callback page after Paystack redirects back.
  * Verifies the transaction with Paystack and creates the paid
- * enrollment (see verifyAndEnroll), then grants welcome-page access.
+ * enrollment (see verifyAndEnroll), then grants learning-page access.
  */
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);

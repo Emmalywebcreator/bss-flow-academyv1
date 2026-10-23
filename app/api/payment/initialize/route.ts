@@ -34,7 +34,7 @@ export async function POST(request: Request) {
   }
 
   // Never charge a student who is already enrolled (paid, or through a
-  // sponsor code); send them to the welcome page instead.
+  // sponsor code); send them to the learning page instead.
   if (await hasActiveEnrollment(registrationId)) {
     return setEnrollmentCookie(
       NextResponse.json(

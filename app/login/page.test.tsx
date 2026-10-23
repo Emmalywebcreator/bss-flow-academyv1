@@ -30,7 +30,7 @@ async function requestCode() {
   return screen.findByLabelText("Login code");
 }
 
-test("asks for the code after sending it, then goes to the welcome page", async () => {
+test("asks for the code after sending it, then goes to the learning page", async () => {
   const codeInput = await requestCode();
 
   expect(fetch).toHaveBeenCalledWith(
@@ -42,7 +42,7 @@ test("asks for the code after sending it, then goes to the welcome page", async 
   fireEvent.change(codeInput, { target: { value: "04-21 37" } });
   fireEvent.click(screen.getByRole("button", { name: "Log in" }));
 
-  await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/welcome"));
+  await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/learn"));
   expect(vi.mocked(fetch).mock.calls[1]).toEqual([
     "/api/login/verify",
     expect.objectContaining({ body: JSON.stringify({ email: "ada@example.com", code: "042137" }) }),

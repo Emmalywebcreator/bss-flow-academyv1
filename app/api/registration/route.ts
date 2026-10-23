@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     }
 
     // Typing an email is not proof of identity, so this doesn't grant
-    // welcome-page access — that comes only from the enrollment cookie,
+    // learning-page access — that comes only from the enrollment cookie,
     // set after enrolling or after logging in with an emailed code.
     if (enrollment) {
       return NextResponse.json(

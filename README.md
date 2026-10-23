@@ -49,7 +49,7 @@ the schema, and `docs/api.md` for the API contract.
    You'll also need a Paystack secret key — use a test key
    (`sk_test_...`) in development.
    Set `TELEGRAM_INVITE_LINK` to the community invite; it is shown
-   only to enrolled students, on the welcome page.
+   only to enrolled students, on the learning page.
    Leave `RESEND_API_KEY` empty locally: login codes are then printed
    to the dev server console instead of emailed.
 
@@ -114,7 +114,8 @@ separate concepts, isolated external services).
 - `app/page.tsx` — landing page
 - `app/register/page.tsx` — registration form + cohort code / payment choice
 - `app/payment/callback/page.tsx` — Paystack redirect target, verifies payment
-- `app/welcome/page.tsx` — post-enrollment success page
+- `app/learn/page.tsx` — learning page: where to start, and the community link
+- `app/welcome/page.tsx` — redirects old links to `/learn`
 - `app/login/page.tsx` — log in with an emailed code, on any device
 - `app/api/login/request/route.ts` — emails an enrolled student a login code
 - `app/api/login/verify/route.ts` — checks the code, sets the enrollment cookie

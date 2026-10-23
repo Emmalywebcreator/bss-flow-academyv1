@@ -75,7 +75,7 @@ export default function RegisterPage() {
       }
 
       if (data.valid) {
-        router.push("/welcome");
+        router.push("/learn");
       } else {
         setCodeResult("invalid");
       }
@@ -101,7 +101,7 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (data.alreadyEnrolled) {
-        router.push("/welcome");
+        router.push("/learn");
         return;
       }
 

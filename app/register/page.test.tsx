@@ -47,7 +47,7 @@ test("sponsor code input does not hint at a real code", async () => {
   expect(placeholder).not.toMatch(/[A-Z0-9]{3,}-[A-Z0-9]{3,}/);
 });
 
-test("sends an already-enrolled student to the welcome page instead of Paystack", async () => {
+test("sends an already-enrolled student to the learning page instead of Paystack", async () => {
   await goToCodeStep();
   vi.mocked(fetch).mockResolvedValueOnce(
     new Response(JSON.stringify({ error: "You're already enrolled.", alreadyEnrolled: true }), {
@@ -58,7 +58,7 @@ test("sends an already-enrolled student to the welcome page instead of Paystack"
   fireEvent.click(screen.getByRole("button", { name: "Back" }));
   fireEvent.click(screen.getByRole("button", { name: /Pay .* with Paystack/ }));
 
-  await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/welcome"));
+  await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/learn"));
   expect(vi.mocked(fetch)).toHaveBeenLastCalledWith("/api/payment/initialize", expect.anything());
 });
 

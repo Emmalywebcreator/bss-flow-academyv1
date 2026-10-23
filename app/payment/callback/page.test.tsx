@@ -42,12 +42,12 @@ test("tells the student a processing payment needs time, without sending them on
   expect(replace).not.toHaveBeenCalled();
 });
 
-test("sends the student to the welcome page once the payment is verified", async () => {
+test("sends the student to the learning page once the payment is verified", async () => {
   verifyResponds({ body: { verified: true } });
 
   render(<PaymentCallbackPage />);
 
-  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/welcome"));
+  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/learn"));
   expect(vi.mocked(fetch)).toHaveBeenCalledWith(
     "/api/payment/verify",
     expect.objectContaining({ body: JSON.stringify({ reference: "bss-ref" }) })
@@ -85,7 +85,7 @@ test("lets the student check again after an error, then continues once verified"
 
   fireEvent.click(screen.getByRole("button", { name: "Check again" }));
 
-  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/welcome"));
+  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/learn"));
   expect(vi.mocked(fetch)).toHaveBeenCalledTimes(2);
 });
 
@@ -110,7 +110,7 @@ test("accepts Paystack's trxref parameter when reference is missing", async () =
   render(<PaymentCallbackPage />);
 
   expect(screen.getByText("Verifying your payment...")).toBeDefined();
-  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/welcome"));
+  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/learn"));
   expect(vi.mocked(fetch)).toHaveBeenCalledWith(
     "/api/payment/verify",
     expect.objectContaining({ body: JSON.stringify({ reference: "bss-trx" }) })
@@ -136,6 +136,6 @@ test("lets the student check a processing payment again until it is verified", a
 
   fireEvent.click(screen.getByRole("button", { name: "Check again" }));
 
-  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/welcome"));
+  await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/learn"));
   expect(vi.mocked(fetch)).toHaveBeenCalledTimes(2);
 });

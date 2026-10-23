@@ -44,7 +44,7 @@ function CallbackContent() {
 
         if (data.verified) {
           setStatus("success");
-          router.replace("/welcome");
+          router.replace("/learn");
         } else if (data.pending) {
           setStatus("pending");
         } else {

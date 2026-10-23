@@ -3,7 +3,7 @@ import type { NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
- * Cookie that lets the welcome page confirm, server-side, that the
+ * Cookie that lets the learning page confirm, server-side, that the
  * visitor is enrolled. It holds the registration ID (an unguessable
  * UUID only the registrant knows); access is always re-checked against
  * the enrollments table, so a revoked enrollment loses access.
@@ -28,6 +28,19 @@ export function setEnrollmentCookie(response: NextResponse, registrationId: stri
 export function clearEnrollmentCookie(response: NextResponse) {
   response.cookies.delete(ENROLLMENT_COOKIE);
   return response;
+}
+
+/** The learner's first name, for greeting them; null if it can't be read. */
+export async function getLearnerFirstName(registrationId: string) {
+  const { data, error } = await getSupabaseServerClient()
+    .from("registrations")
+    .select("full_name")
+    .eq("id", registrationId)
+    .maybeSingle();
+
+  if (error) console.error("learner name lookup failed", error);
+  const fullName = (data as { full_name?: string } | null)?.full_name?.trim();
+  return fullName ? fullName.split(/\s+/)[0] : null;
 }
 
 /** Whether the registration has an active enrollment. */
