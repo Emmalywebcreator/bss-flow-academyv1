@@ -60,7 +60,7 @@ export default function LoginPage() {
         setSubmitting(false);
         return;
       }
-      router.push("/welcome");
+      router.push("/learn");
     } catch {
       setError("Something went wrong. Please check your connection and try again.");
       setSubmitting(false);

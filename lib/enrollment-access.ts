@@ -3,7 +3,7 @@ import type { NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
- * Cookie that lets the welcome page confirm, server-side, that the
+ * Cookie that lets the learning page confirm, server-side, that the
  * visitor is enrolled. It holds the registration ID (an unguessable
  * UUID only the registrant knows); access is always re-checked against
  * the enrollments table, so a revoked enrollment loses access.

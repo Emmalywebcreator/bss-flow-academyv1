@@ -6,7 +6,7 @@ import { setEnrollmentCookie } from "@/lib/enrollment-access";
 
 /**
  * Checks an emailed login code and, if it's right, sets the enrollment
- * cookie, so the student can open the welcome page on this device.
+ * cookie, so the student can open the learning page on this device.
  */
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
