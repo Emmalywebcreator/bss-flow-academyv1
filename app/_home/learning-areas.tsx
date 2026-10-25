@@ -8,7 +8,7 @@ export function LearningAreas() {
       id="explore"
       eyebrow="Explore learning"
       title="The areas we teach, and plan to"
-      intro="Every area starts from the same foundations. These areas are planned, and each one opens when its first lessons are published."
+      intro="Every area starts from the same foundations. Web Development is open, starting with a free first lesson; the other areas are planned and open when their first lessons are published."
     >
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {LEARNING_AREAS.map((area) => (

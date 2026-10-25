@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import LearnPage from "./page";
 import { supabaseMock } from "@/tests/mocks/supabase";
 
@@ -117,8 +117,11 @@ test("greets an enrolled learner and recommends Foundations for beginners", asyn
   );
   const foundations = screen.getByRole("heading", { name: "Foundations" }).closest("article")!;
   expect(foundations.textContent).toContain("Recommended for beginners");
-  expect(foundations.textContent).toContain("Lesson 1: How the Internet and Websites Work");
-  expect(foundations.querySelector("a")).toBeNull();
+  expect(
+    within(foundations)
+      .getByRole("link", { name: /Lesson 1: How the Internet and Websites Work/ })
+      .getAttribute("href")
+  ).toBe("/learn/foundations/how-the-internet-and-websites-work");
   expect(screen.getAllByText("Planned")).toHaveLength(3);
 });
 

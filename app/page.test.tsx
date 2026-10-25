@@ -3,7 +3,7 @@ import { afterEach, expect, test } from "vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import Home from "./page";
 import { PROGRAM } from "@/constants/program";
-import { LEARNING_AREAS, UPCOMING_LESSONS } from "@/constants/learning";
+import { LEARNING_AREAS, LESSONS } from "@/constants/learning";
 import { NAV_LINKS } from "@/app/nav-links";
 
 afterEach(cleanup);
@@ -52,12 +52,18 @@ test("learning areas are labelled planned and not linked", () => {
   }
 });
 
-test("upcoming lessons are marked coming soon and not linked", () => {
+test("published lessons link to their page; coming-soon lessons aren't linked", () => {
   render(<Home />);
 
-  for (const lesson of UPCOMING_LESSONS) {
+  for (const lesson of LESSONS) {
     const card = screen.getByRole("heading", { level: 3, name: lesson.title }).closest("article")!;
-    expect(within(card).getByText("Coming soon")).toBeDefined();
-    expect(within(card).queryByRole("link")).toBeNull();
+    if (lesson.status === "published") {
+      expect(within(card).getByRole("link", { name: `Start lesson ${lesson.number}` }).getAttribute("href")).toBe(
+        lesson.href
+      );
+    } else {
+      expect(within(card).getByText("Coming soon")).toBeDefined();
+      expect(within(card).queryByRole("link")).toBeNull();
+    }
   }
 });
