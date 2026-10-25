@@ -135,7 +135,7 @@ async function ensurePaidEnrollment(
   const { data: cohort, error: cohortError } = await supabase
     .from("cohorts")
     .select("id")
-    .eq("name", PROGRAM.firstCohort)
+    .eq("name", PROGRAM.enrollmentCohort)
     .maybeSingle();
 
   if (cohortError || !cohort) {

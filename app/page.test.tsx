@@ -14,7 +14,7 @@ test("landing page has a headline and links to registration", () => {
   expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
     "Learn tech by building real things."
   );
-  expect(screen.getByRole("link", { name: "Register now" }).getAttribute("href")).toBe(
+  expect(screen.getByRole("link", { name: "Register for free" }).getAttribute("href")).toBe(
     "/register"
   );
 });
@@ -23,10 +23,11 @@ test("landing page is self-paced, with no cohort or Telegram link", () => {
   const { container } = render(<Home />);
 
   expect(screen.getByText("Self-paced learning")).toBeDefined();
-  expect(container.textContent).not.toContain(PROGRAM.firstCohort);
+  expect(container.textContent).not.toMatch(/cohort|sponsor/i);
   expect(container.textContent).not.toContain(PROGRAM.topic);
   expect(container.querySelector('a[href*="t.me"]')).toBeNull();
-  expect(screen.getByText(new RegExp(`₦${PROGRAM.standardPrice.toLocaleString()}`))).toBeDefined();
+  // Learning is free for now, so no price is shown.
+  expect(container.textContent).not.toContain("₦");
 });
 
 test("every in-page navigation link has a matching section", () => {

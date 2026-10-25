@@ -30,9 +30,8 @@ the schema, and `docs/api.md` for the API contract.
    ```
 
    This runs Supabase locally and applies everything in
-   `supabase/migrations/`, then `supabase/seed.sql` (local-only data:
-   it sets the sponsor code `local-dev-code` so you can test sponsored
-   enrollment). Studio, the database UI, is at
+   `supabase/migrations/`, then `supabase/seed.sql` (local-only data).
+   Studio, the database UI, is at
    [http://localhost:54323](http://localhost:54323).
 
    `npm run db:reset` rebuilds the database from scratch; `npm run db:stop`
@@ -84,21 +83,12 @@ In the Paystack dashboard (Settings → API Keys & Webhooks), set the
 webhook URL to `https://<your-domain>/api/payment/webhook`, so students
 who close the tab right after paying are still enrolled.
 
-`db push` applies the migrations only — `seed.sql` is never pushed, so
-the hosted Cohort 1 starts with no sponsor code. Set a hard-to-guess
-code in the hosted project's SQL editor (never commit it to the repo):
+`db push` applies the migrations only — `seed.sql` is never pushed.
 
-```sql
-update cohorts set sponsor_code = '<your-secret-code>' where name = 'Cohort 1';
-```
-
-A sponsor code enrolls at most `sponsor_max_uses` students (40 for
-Cohort 1); after that, students are asked to pay the standard fee.
-Revoking a sponsored enrollment frees its place. To change the cap:
-
-```sql
-update cohorts set sponsor_max_uses = <number> where name = 'Cohort 1';
-```
+Learning is free for now: registering enrolls the learner straight
+away (`access_type = 'free'`). The site doesn't offer payment, but the
+Paystack routes stay in place for when a fee returns. Sponsor codes
+were retired in `20261025000000_free_enrollment.sql`.
 
 ## Learner journey (V1)
 
@@ -120,8 +110,7 @@ separate concepts, isolated external services).
 - `app/api/login/request/route.ts` — emails an enrolled student a login code
 - `app/api/login/verify/route.ts` — checks the code, sets the enrollment cookie
 - `app/api/logout/route.ts` — clears the enrollment cookie
-- `app/api/registration/route.ts` — creates a registration
-- `app/api/cohort/validate/route.ts` — validates a sponsor code, creates sponsored enrollment
+- `app/api/registration/route.ts` — creates a registration, enrolls it for free, sets the enrollment cookie
 - `app/api/payment/initialize/route.ts` — starts a Paystack transaction
 - `app/api/payment/verify/route.ts` — verifies a Paystack transaction, creates paid enrollment
 - `lib/paystack.ts` — Paystack API helper
