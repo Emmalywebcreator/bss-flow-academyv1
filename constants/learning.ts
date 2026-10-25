@@ -1,6 +1,6 @@
-// What the homepage says about learning areas and paths. Learning is
-// self-paced; an area is "open" only once it has published lessons.
-// Until then it is planned, and the homepage labels it that way.
+// What the site says about learning areas, paths and lessons. Learning
+// is self-paced; an area is "open" only once it has published lessons.
+// Until then it is planned, and the site labels it that way.
 
 export type LearningStatus = "open" | "planned";
 
@@ -17,7 +17,7 @@ export const LEARNING_AREAS: readonly LearningArea[] = [
     title: "Web Development",
     description:
       "Build websites and web apps with HTML, CSS and JavaScript, using AI tools along the way.",
-    status: "planned",
+    status: "open",
   },
   {
     id: "programming",
@@ -107,19 +107,31 @@ export const TEACHING_PRINCIPLES: readonly Principle[] = [
   },
 ];
 
-export type UpcomingLesson = {
+export type Lesson = {
+  number: number;
   title: string;
   stage: string;
   summary: string;
+  // Lessons without a page yet are shown as "Coming soon", never linked.
+  status: "published" | "coming-soon";
+  href?: string;
 };
 
-// Lessons in preparation. Shown as "Coming soon" with no link until
-// the lesson has its own page.
-export const UPCOMING_LESSONS: readonly UpcomingLesson[] = [
+export const LESSONS: readonly Lesson[] = [
   {
+    number: 1,
     title: "How the Internet and Websites Work",
     stage: "Foundations",
     summary:
-      "What happens between typing a web address and seeing a page: browsers, servers, and how HTML, CSS and JavaScript fit together.",
+      "What happens between typing a web address and seeing a page: browsers, DNS, servers, databases, and how HTML, CSS and JavaScript fit together.",
+    status: "published",
+    href: "/learn/foundations/how-the-internet-and-websites-work",
+  },
+  {
+    number: 2,
+    title: "Introduction to HTML",
+    stage: "Foundations",
+    summary: "Write your first web page and learn the elements that give every page its structure.",
+    status: "coming-soon",
   },
 ];
