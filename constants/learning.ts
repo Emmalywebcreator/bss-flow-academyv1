@@ -129,9 +129,10 @@ export const LESSONS: readonly Lesson[] = [
   },
   {
     number: 2,
-    title: "Introduction to HTML",
+    title: "HTML5: Structuring Websites",
     stage: "Foundations",
-    summary: "Write your first web page and learn the elements that give every page its structure.",
-    status: "coming-soon",
+    summary: "Learn the anatomy of HTML syntax to structure your websites.",
+    status: "published",
+    href: "/learn/foundations/html5-structuring-websites",
   },
 ];

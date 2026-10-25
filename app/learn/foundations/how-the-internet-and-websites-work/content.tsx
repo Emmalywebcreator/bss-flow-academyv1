@@ -1,10 +1,8 @@
-import type { ReactNode } from "react";
 import { Code, CodeBlock, KeyIdea } from "@/app/_lessons/prose";
 import { InternetFlowDiagram } from "@/app/_lessons/internet-flow-diagram";
 import { Quiz } from "@/app/_lessons/quiz";
 import { QUIZ_QUESTIONS } from "./quiz-questions";
-
-export type LessonSection = { id: string; title: string; body: ReactNode };
+import type { LessonPart, LessonSection } from "@/app/_lessons/lesson";
 
 // Example addresses come from ranges reserved for documentation
 // (example.com, 203.0.113.0/24), so they never point at a real site.
@@ -655,22 +653,6 @@ git log                       # list the snapshots so far
     ),
   },
 ];
-
-export type LessonPart = {
-  slug: string;
-  title: string;
-  /** Rough time to work through the part, shown to the reader. */
-  minutes: number;
-  sections: readonly LessonSection[];
-};
-
-/**
- * Time a reader must spend on a part before it can be marked complete:
- * half its estimated time, and never under 30 seconds.
- */
-export function requiredSeconds(part: LessonPart) {
-  return Math.max(30, (part.minutes * 60) / 2);
-}
 
 function sections(...ids: string[]): LessonSection[] {
   return ids.map((id) => {

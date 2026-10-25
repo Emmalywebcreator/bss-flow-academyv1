@@ -122,6 +122,11 @@ test("greets an enrolled learner and recommends Foundations for beginners", asyn
       .getByRole("link", { name: /Lesson 1: How the Internet and Websites Work/ })
       .getAttribute("href")
   ).toBe("/learn/foundations/how-the-internet-and-websites-work");
+  expect(
+    within(foundations)
+      .getByRole("link", { name: /Lesson 2: HTML5: Structuring Websites/ })
+      .getAttribute("href")
+  ).toBe("/learn/foundations/html5-structuring-websites");
   expect(screen.getAllByText("Planned")).toHaveLength(3);
 });
 
