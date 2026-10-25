@@ -1,5 +1,8 @@
 import "server-only";
 import type { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { withReturnTo } from "@/lib/return-to";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
@@ -62,4 +65,14 @@ export async function hasActiveEnrollment(registrationId: string | undefined) {
   }
 
   return Boolean(data);
+}
+
+/**
+ * For pages only enrolled learners may see. Anyone else is sent to
+ * register, and brought back to `returnTo` afterwards. Call it from the
+ * page itself, not a layout: layouts don't re-run on every navigation.
+ */
+export async function requireEnrollment(returnTo: string) {
+  const registrationId = (await cookies()).get(ENROLLMENT_COOKIE)?.value;
+  if (!(await hasActiveEnrollment(registrationId))) redirect(withReturnTo("/register", returnTo));
 }

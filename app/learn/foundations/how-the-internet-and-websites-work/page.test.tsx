@@ -1,8 +1,11 @@
 // @vitest-environment jsdom
-import { afterEach, expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import Lesson from "./page";
 import { PARTS, SECTIONS } from "./content";
+
+// Lessons are for enrolled learners; these tests render them as one.
+vi.mock("@/lib/enrollment-access", () => ({ requireEnrollment: vi.fn() }));
 
 afterEach(() => {
   cleanup();
@@ -13,8 +16,8 @@ test("every section belongs to exactly one part, in order", () => {
   expect(PARTS.flatMap((p) => p.sections.map((s) => s.id))).toEqual(SECTIONS.map((s) => s.id));
 });
 
-test("the overview lists every part and starts with no progress", () => {
-  render(<Lesson />);
+test("the overview lists every part and starts with no progress", async () => {
+  render(await Lesson());
 
   expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("How the Internet and Websites Work");
   const links = within(screen.getByRole("navigation", { name: "Lesson parts" })).getAllByRole("link");
@@ -27,12 +30,12 @@ test("the overview lists every part and starts with no progress", () => {
   );
 });
 
-test("the overview picks up where the reader left off", () => {
+test("the overview picks up where the reader left off", async () => {
   localStorage.setItem(
     "lesson-progress:how-the-internet-and-websites-work",
     JSON.stringify(["getting-started", "the-internet-and-the-web"])
   );
-  render(<Lesson />);
+  render(await Lesson());
 
   expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("2");
   expect(screen.getByText(`2 of ${PARTS.length} parts complete`)).toBeDefined();

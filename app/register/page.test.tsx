@@ -4,12 +4,15 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import RegisterPage from "./page";
 
 const push = vi.hoisted(() => vi.fn());
+const searchParams = vi.hoisted(() => ({ current: new URLSearchParams() }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push, replace: vi.fn() }),
+  useSearchParams: () => searchParams.current,
 }));
 
 beforeEach(() => {
   push.mockReset();
+  searchParams.current = new URLSearchParams();
   vi.stubGlobal(
     "fetch",
     vi.fn().mockResolvedValue(
@@ -72,4 +75,26 @@ test("registration form offers a way to log in instead", () => {
 
   expect(screen.getByText(/Already have an account\?/)).toBeDefined();
   expect(screen.getByRole("link", { name: "Log in" }).getAttribute("href")).toBe("/login");
+});
+
+test("after registering from a lesson link, the learner goes back to that lesson", async () => {
+  const lesson = "/learn/foundations/html5-structuring-websites";
+  searchParams.current = new URLSearchParams({ next: lesson });
+  render(<RegisterPage />);
+
+  expect(screen.getByRole("link", { name: "Log in" }).getAttribute("href")).toBe(
+    `/login?next=${encodeURIComponent(lesson)}`
+  );
+  fillAndSubmit();
+
+  await vi.waitFor(() => expect(push).toHaveBeenCalledWith(lesson));
+});
+
+test("ignores a return path that isn't a learning page", async () => {
+  searchParams.current = new URLSearchParams({ next: "https://evil.example" });
+  render(<RegisterPage />);
+
+  fillAndSubmit();
+
+  await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/learn"));
 });

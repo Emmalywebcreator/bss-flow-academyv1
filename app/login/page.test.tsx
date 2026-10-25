@@ -4,8 +4,10 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import LoginPage from "./page";
 
 const push = vi.hoisted(() => vi.fn());
+const searchParams = vi.hoisted(() => ({ current: new URLSearchParams() }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push, replace: vi.fn() }),
+  useSearchParams: () => searchParams.current,
 }));
 
 function respond(status: number, body: unknown) {
@@ -14,6 +16,7 @@ function respond(status: number, body: unknown) {
 
 beforeEach(() => {
   push.mockReset();
+  searchParams.current = new URLSearchParams();
   vi.stubGlobal("fetch", vi.fn());
 });
 
@@ -74,4 +77,26 @@ test("links to registration for people who haven't registered", () => {
   render(<LoginPage />);
 
   expect(screen.getByRole("link", { name: "Register" }).getAttribute("href")).toBe("/register");
+});
+
+test("after logging in from a lesson link, the learner goes back to that lesson", async () => {
+  const lesson = "/learn/foundations/how-the-internet-and-websites-work/summary";
+  searchParams.current = new URLSearchParams({ next: lesson });
+  const codeInput = await requestCode();
+  expect(screen.queryByRole("link", { name: "Register" })).toBeNull(); // code step
+
+  respond(200, { ok: true });
+  fireEvent.change(codeInput, { target: { value: "042137" } });
+  fireEvent.click(screen.getByRole("button", { name: "Log in" }));
+
+  await vi.waitFor(() => expect(push).toHaveBeenCalledWith(lesson));
+});
+
+test("the register link keeps the lesson to return to", () => {
+  searchParams.current = new URLSearchParams({ next: "/learn/foundations/html5-structuring-websites" });
+  render(<LoginPage />);
+
+  expect(screen.getByRole("link", { name: "Register" }).getAttribute("href")).toBe(
+    "/register?next=%2Flearn%2Ffoundations%2Fhtml5-structuring-websites"
+  );
 });
