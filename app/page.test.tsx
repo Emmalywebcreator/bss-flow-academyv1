@@ -53,14 +53,14 @@ test("learning areas are labelled planned and not linked", () => {
   }
 });
 
-test("published lessons link to their page; coming-soon lessons aren't linked", () => {
+test("published lessons send signed-out visitors to register first; coming-soon lessons aren't linked", () => {
   render(<Home />);
 
   for (const lesson of LESSONS) {
     const card = screen.getByRole("heading", { level: 3, name: lesson.title }).closest("article")!;
     if (lesson.status === "published") {
       expect(within(card).getByRole("link", { name: `Start lesson ${lesson.number}` }).getAttribute("href")).toBe(
-        lesson.href
+        `/register?next=${encodeURIComponent(lesson.href!)}`
       );
     } else {
       expect(within(card).getByText("Coming soon")).toBeDefined();

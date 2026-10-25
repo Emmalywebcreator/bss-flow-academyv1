@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LESSONS, type Lesson } from "@/constants/learning";
 import { SignedIn, SignedOut } from "@/app/session";
+import { LessonLink } from "@/app/_home/lesson-link";
 import { Section, StatusBadge } from "@/app/_home/section";
 
 /** The first lessons, and how to register as a learner. */
@@ -39,7 +40,7 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
       }`}
     >
       <div className="flex flex-wrap items-center gap-3">
-        <StatusBadge open={Boolean(published)}>{published ? "Free lesson" : "Coming soon"}</StatusBadge>
+        <StatusBadge open={Boolean(published)}>{published ? "Free for learners" : "Coming soon"}</StatusBadge>
         <span className="text-sm text-zinc-500 dark:text-zinc-400">
           {lesson.stage} &middot; Lesson {lesson.number}
         </span>
@@ -47,12 +48,12 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
       <h3 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">{lesson.title}</h3>
       <p className="text-zinc-600 dark:text-zinc-400">{lesson.summary}</p>
       {published ? (
-        <Link
+        <LessonLink
           href={lesson.href!}
           className="mt-auto self-start rounded-full bg-zinc-950 px-6 py-3 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
         >
           Start lesson {lesson.number}
-        </Link>
+        </LessonLink>
       ) : (
         <p className="mt-auto text-sm text-zinc-500 dark:text-zinc-400">
           Not published yet. It will appear here when it&apos;s ready.

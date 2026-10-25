@@ -4,6 +4,7 @@ import {
   lessonPartMetadata,
   lessonPartParams,
   partIndexOrNotFound,
+  requireLessonAccess,
 } from "@/app/_lessons/lesson-pages";
 import { LESSON } from "../lesson";
 
@@ -18,6 +19,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Html5Part({ params }: Props) {
-  const index = partIndexOrNotFound(LESSON, (await params).part);
+  const { part } = await params;
+  const index = partIndexOrNotFound(LESSON, part);
+  await requireLessonAccess(LESSON, part);
   return <LessonPartPage definition={LESSON} index={index} />;
 }

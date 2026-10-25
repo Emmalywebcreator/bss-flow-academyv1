@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { SessionProvider } from "./session";
@@ -8,6 +8,9 @@ import { SiteFooter } from "./site-footer";
 import { FeaturedLearning } from "./_home/featured-learning";
 import Html5Lesson from "./learn/foundations/html5-structuring-websites/page";
 import Html5Part from "./learn/foundations/html5-structuring-websites/[part]/page";
+
+// Lessons are for enrolled learners; these tests render them as one.
+vi.mock("@/lib/enrollment-access", () => ({ requireEnrollment: vi.fn() }));
 
 afterEach(cleanup);
 
@@ -53,12 +56,21 @@ test("the homepage card invites signed-out visitors to register, and sends learn
   expect(screen.getByRole("link", { name: "Go to my learning" }).getAttribute("href")).toBe("/learn");
 });
 
-test("lesson pages only ask signed-out visitors to register", async () => {
-  renderAs(false, <Html5Lesson />);
-  expect(screen.getByRole("link", { name: "Register" })).toBeDefined();
+test("the homepage sends signed-out visitors to register before a lesson, and learners straight in", () => {
+  renderAs(false, <FeaturedLearning />);
+  expect(screen.getByRole("link", { name: "Start lesson 2" }).getAttribute("href")).toBe(
+    "/register?next=%2Flearn%2Ffoundations%2Fhtml5-structuring-websites"
+  );
   cleanup();
 
-  renderAs(true, <Html5Lesson />);
+  renderAs(true, <FeaturedLearning />);
+  expect(screen.getByRole("link", { name: "Start lesson 2" }).getAttribute("href")).toBe(
+    "/learn/foundations/html5-structuring-websites"
+  );
+});
+
+test("lesson pages, now only for learners, have no register card", async () => {
+  renderAs(true, await Html5Lesson());
   expect(screen.queryByRole("link", { name: "Register" })).toBeNull();
   cleanup();
 

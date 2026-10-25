@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LESSONS, type Lesson } from "@/constants/learning";
 import { PROGRAM } from "@/constants/program";
+import { requireEnrollment } from "@/lib/enrollment-access";
 import { StatusBadge } from "@/app/_home/section";
-import { SignedOut } from "@/app/session";
 import { proseClass } from "./prose";
 import { requiredSeconds, type LessonDefinition } from "./lesson";
 import {
@@ -48,6 +48,15 @@ export function lessonPartMetadata({ lesson, parts }: LessonDefinition, slug: st
   return { title: `${part.title} — ${lesson.title} — ${PROGRAM.name}` };
 }
 
+/**
+ * Lessons are for registered learners: call this first in each lesson
+ * route. Anyone without an active enrollment is sent to register, then
+ * brought back to this page.
+ */
+export async function requireLessonAccess({ lesson }: LessonDefinition, slug?: string) {
+  await requireEnrollment(slug ? `${lessonHref(lesson)}/${slug}` : lessonHref(lesson));
+}
+
 /** The index of the part with this slug; a 404 if there isn't one. */
 export function partIndexOrNotFound({ parts }: LessonDefinition, slug: string) {
   const index = parts.findIndex((p) => p.slug === slug);
@@ -82,25 +91,6 @@ function Breadcrumb({ lesson, trail }: { lesson: Lesson; trail: readonly Crumb[]
         ))}
       </ol>
     </nav>
-  );
-}
-
-/** Invites visitors to register; hidden once they're signed in. */
-function RegisterCard() {
-  return (
-    <SignedOut>
-      <div className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-950">
-        <div>
-          <p className="font-semibold text-zinc-950 dark:text-zinc-50">Learning with {PROGRAM.name}?</p>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            Register as a learner to join the community and follow along as new lessons are published.
-          </p>
-        </div>
-        <Link href="/register" className={`shrink-0 ${primaryButton}`}>
-          Register
-        </Link>
-      </div>
-    </SignedOut>
   );
 }
 
@@ -153,7 +143,6 @@ function NextLesson({ lesson }: { lesson: Lesson }) {
           as they&apos;re published.
         </p>
       )}
-      <RegisterCard />
     </section>
   );
 }
@@ -171,7 +160,7 @@ export function LessonOverview({ definition }: { definition: LessonDefinition })
 
         <header className="mt-6 flex flex-col gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge open>Free lesson</StatusBadge>
+            <StatusBadge open>Free for learners</StatusBadge>
             <StatusBadge>
               {lesson.stage} &middot; Lesson {lesson.number}
             </StatusBadge>
@@ -210,11 +199,6 @@ export function LessonOverview({ definition }: { definition: LessonDefinition })
           </nav>
         </section>
 
-        <SignedOut>
-          <div className="mt-10">
-            <RegisterCard />
-          </div>
-        </SignedOut>
       </div>
     </main>
   );

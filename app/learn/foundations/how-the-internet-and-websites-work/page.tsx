@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PROGRAM } from "@/constants/program";
-import { LessonOverview } from "@/app/_lessons/lesson-pages";
+import { LessonOverview, requireLessonAccess } from "@/app/_lessons/lesson-pages";
 import { LESSON } from "./lesson";
 
 export const metadata: Metadata = {
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
     "A free beginner lesson on how the internet and websites work: DNS, HTTP and HTTPS, web servers, databases, HTML, CSS, JavaScript, Git, GitHub and basic troubleshooting.",
 };
 
-/** Lesson 1's overview, open to everyone. */
-export default function HowTheInternetWorksLesson() {
+/** Lesson 1's overview, for registered learners. */
+export default async function HowTheInternetWorksLesson() {
+  await requireLessonAccess(LESSON);
   return <LessonOverview definition={LESSON} />;
 }

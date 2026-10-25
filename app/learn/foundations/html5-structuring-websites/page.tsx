@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PROGRAM } from "@/constants/program";
-import { LessonOverview } from "@/app/_lessons/lesson-pages";
+import { LessonOverview, requireLessonAccess } from "@/app/_lessons/lesson-pages";
 import { LESSON } from "./lesson";
 
 export const metadata: Metadata = {
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
     "A free beginner lesson on HTML5: tags and elements, the boilerplate, nesting, headings, lists, images, links, and building a multi-page website.",
 };
 
-/** Lesson 2's overview, open to everyone. */
-export default function Html5Lesson() {
+/** Lesson 2's overview, for registered learners. */
+export default async function Html5Lesson() {
+  await requireLessonAccess(LESSON);
   return <LessonOverview definition={LESSON} />;
 }

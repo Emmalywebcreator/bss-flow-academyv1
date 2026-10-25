@@ -4,6 +4,9 @@ import { act, cleanup, fireEvent, render, screen, within } from "@testing-librar
 import Part from "./page";
 import { PARTS } from "../content";
 
+// Lessons are for enrolled learners; these tests render them as one.
+vi.mock("@/lib/enrollment-access", () => ({ requireEnrollment: vi.fn() }));
+
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
@@ -99,7 +102,8 @@ test("the last part links to the next lesson and finishes this one", async () =>
   expect(within(next).getByRole("link", { name: /Start lesson 2/ }).getAttribute("href")).toBe(
     "/learn/foundations/html5-structuring-websites"
   );
-  expect(within(next).getByRole("link", { name: "Register" }).getAttribute("href")).toBe("/register");
+  // Only registered learners see lessons, so there's no register card.
+  expect(within(next).queryByRole("link", { name: "Register" })).toBeNull();
   expect(screen.getByRole("link", { name: /Finish the lesson/ }).getAttribute("href")).toBe(BASE);
 });
 

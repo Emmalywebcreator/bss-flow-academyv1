@@ -2,7 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { safeReturnTo, withReturnTo } from "@/lib/return-to";
 
 type Step = "email" | "code";
 
@@ -13,6 +14,8 @@ const primaryButtonClass =
 
 export default function LoginPage() {
   const router = useRouter();
+  // The learning page that sent them here, if any (see requireEnrollment).
+  const next = useSearchParams().get("next");
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -60,7 +63,7 @@ export default function LoginPage() {
         setSubmitting(false);
         return;
       }
-      router.push("/learn");
+      router.push(safeReturnTo(next) ?? "/learn");
     } catch {
       setError("Something went wrong. Please check your connection and try again.");
       setSubmitting(false);
@@ -98,7 +101,10 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
               Not registered yet?{" "}
-              <Link href="/register" className="font-medium text-zinc-950 underline dark:text-zinc-50">
+              <Link
+                href={withReturnTo("/register", next)}
+                className="font-medium text-zinc-950 underline dark:text-zinc-50"
+              >
                 Register
               </Link>
             </p>

@@ -1,10 +1,13 @@
 // @vitest-environment jsdom
-import { afterEach, expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import Lesson from "./page";
 import { PARTS } from "./content";
 import { SITE_FILES, SITE_PATHS } from "./parts/site-example";
 import { BOILERPLATE } from "./parts/02-boilerplate";
+
+// Lessons are for enrolled learners; these tests render them as one.
+vi.mock("@/lib/enrollment-access", () => ({ requireEnrollment: vi.fn() }));
 
 afterEach(() => {
   cleanup();
@@ -37,8 +40,8 @@ test("every teaching module ends with a recap and a quick check", () => {
   expect(new Set(ids).size).toBe(ids.length);
 });
 
-test("the overview lists the ten parts and starts at Part 1", () => {
-  render(<Lesson />);
+test("the overview lists the ten parts and starts at Part 1", async () => {
+  render(await Lesson());
 
   expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("HTML5: Structuring Websites");
   expect(screen.getByText("Learn the anatomy of HTML syntax to structure your websites.")).toBeDefined();
@@ -50,12 +53,12 @@ test("the overview lists the ten parts and starts at Part 1", () => {
   );
 });
 
-test("Lesson 1's saved progress doesn't show up in this lesson", () => {
+test("Lesson 1's saved progress doesn't show up in this lesson", async () => {
   localStorage.setItem(
     "lesson-progress:how-the-internet-and-websites-work",
     JSON.stringify(["getting-started", "the-internet-and-the-web"])
   );
-  render(<Lesson />);
+  render(await Lesson());
 
   expect(screen.getByText("0 of 10 parts complete")).toBeDefined();
 });

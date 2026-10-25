@@ -2,12 +2,15 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { safeReturnTo, withReturnTo } from "@/lib/return-to";
 import { PROGRAM } from "@/constants/program";
 import { experienceLevels } from "@/lib/schemas";
 
 export default function RegisterPage() {
   const router = useRouter();
+  // The learning page that sent them here, if any (see requireEnrollment).
+  const next = useSearchParams().get("next");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -39,7 +42,7 @@ export default function RegisterPage() {
       }
 
       // Learning is free for now, so registering also enrolls and signs in.
-      router.push("/learn");
+      router.push(safeReturnTo(next) ?? "/learn");
     } catch {
       setError("Something went wrong. Please check your connection and try again.");
     } finally {
@@ -55,8 +58,8 @@ export default function RegisterPage() {
             Register as a learner
           </h1>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Learning with {PROGRAM.name} is free. Register to follow the lessons at your own pace
-            and join the learner community.
+            Learning with {PROGRAM.name} is free. Register to open the lessons, follow them at your
+            own pace and join the learner community.
           </p>
 
           <label className="flex flex-col gap-1 text-sm text-zinc-700 dark:text-zinc-300">
@@ -143,7 +146,10 @@ export default function RegisterPage() {
 
           <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-zinc-950 underline dark:text-zinc-50">
+            <Link
+              href={withReturnTo("/login", next)}
+              className="font-medium text-zinc-950 underline dark:text-zinc-50"
+            >
               Log in
             </Link>
           </p>

@@ -5,6 +5,9 @@ import Part from "./page";
 import { PARTS } from "../content";
 import { requiredSeconds } from "@/app/_lessons/lesson";
 
+// Lessons are for enrolled learners; these tests render them as one.
+vi.mock("@/lib/enrollment-access", () => ({ requireEnrollment: vi.fn() }));
+
 afterEach(() => {
   cleanup();
   localStorage.clear();
