@@ -5,7 +5,7 @@ import { SignedIn, SignedOut } from "@/app/session";
 
 /**
  * Logo, primary navigation, and Log in and Register buttons (or My
- * learning, once signed in), shown on every page.
+ * learning and Log out, once signed in), shown on every page.
  */
 export function SiteHeader() {
   return (
@@ -37,10 +37,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <SignedOut>
             {/* On phones, "Log in" lives in the menu to leave room for the logo. */}
-            <Link
-              href="/login"
-              className="hidden rounded-full px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 sm:block dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
-            >
+            <Link href="/login" className={secondaryLink}>
               Log in
             </Link>
             <Link href="/register" className={primaryButton}>
@@ -48,6 +45,10 @@ export function SiteHeader() {
             </Link>
           </SignedOut>
           <SignedIn>
+            {/* On phones, "Log out" lives in the menu, like "Log in". */}
+            <Link href="/logout" className={secondaryLink}>
+              Log out
+            </Link>
             <Link href="/learn" className={primaryButton}>
               My learning
             </Link>
@@ -59,6 +60,8 @@ export function SiteHeader() {
   );
 }
 
+const secondaryLink =
+  "hidden rounded-full px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 sm:block dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-zinc-50";
 const primaryButton =
   "rounded-full bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200";
 
