@@ -140,6 +140,13 @@ export default function RegisterPage() {
             </Link>
             .
           </p>
+
+          <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
+            Already have an account?{" "}
+            <Link href="/login" className="font-medium text-zinc-950 underline dark:text-zinc-50">
+              Log in
+            </Link>
+          </p>
         </form>
       </div>
     </div>

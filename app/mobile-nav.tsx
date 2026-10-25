@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { NAV_LINKS } from "@/app/nav-links";
+import { useSignedIn } from "@/app/session";
 
 /** The menu button and drop-down shown below the `md` breakpoint. */
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+  const signedIn = useSignedIn();
 
   useEffect(() => {
     if (!open) return;
@@ -50,15 +52,18 @@ export function MobileNav() {
                 </Link>
               </li>
             ))}
-            <li className="mt-2 border-t border-zinc-200 pt-2 sm:hidden dark:border-zinc-800">
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="block rounded-lg px-3 py-3 font-medium text-zinc-950 hover:bg-zinc-100 dark:text-zinc-50 dark:hover:bg-zinc-900"
-              >
-                Log in
-              </Link>
-            </li>
+            {/* Signed-in visitors have My learning in the header instead. */}
+            {!signedIn && (
+              <li className="mt-2 border-t border-zinc-200 pt-2 sm:hidden dark:border-zinc-800">
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg px-3 py-3 font-medium text-zinc-950 hover:bg-zinc-100 dark:text-zinc-50 dark:hover:bg-zinc-900"
+                >
+                  Log in
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       )}
