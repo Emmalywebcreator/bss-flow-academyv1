@@ -2,21 +2,17 @@
 
 ## POST /api/registration
 
-Creates a registration.
+Creates a registration and, while learning is free, enrolls it
+straight away (`access_type = 'free'`) and sets the enrollment cookie.
 
 The server validates the submitted information.
 
-## POST /api/cohort/validate
-
-Validates a cohort sponsorship code.
-
-The server determines whether the code is valid.
-
-The client cannot determine sponsorship eligibility.
+An email that is already enrolled gets a 409 and must log in instead.
 
 ## POST /api/payment/initialize
 
-Initializes a Paystack transaction.
+Initializes a Paystack transaction. Not linked from the site while
+learning is free.
 
 The server determines the amount.
 

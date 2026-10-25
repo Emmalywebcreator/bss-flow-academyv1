@@ -5,7 +5,7 @@ import { PROGRAM } from "@/constants/program";
 // The registration page is a client component, so its metadata lives here.
 export const metadata: Metadata = {
   title: `Register — ${PROGRAM.name}`,
-  description: `Register for ${PROGRAM.firstCohort} of ${PROGRAM.name}'s ${PROGRAM.topic} program, with a sponsor code or a one-time fee.`,
+  description: `Register for free with ${PROGRAM.name} to learn ${PROGRAM.topic} at your own pace.`,
 };
 
 export default function RegisterLayout({ children }: { children: ReactNode }) {

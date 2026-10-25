@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" updated="22 October 2026">
+    <LegalPage title="Privacy Policy" updated="25 October 2026">
       <p>
         {PROGRAM.name} is run by {PROGRAM.operator} from {PROGRAM.location}, who is responsible for
         your personal data. This policy explains what we collect and why, in line with the Nigeria
@@ -24,24 +24,24 @@ export default function PrivacyPage() {
           experience level, and (if you tell us) what you want to build.
         </li>
         <li>
-          <strong>Payment records:</strong> the payment reference, amount, currency and status.
+          <strong>Payment records</strong> (if you have paid us): the payment reference, amount, currency and status.
           Card and bank details are handled by Paystack; we never see or store them.
         </li>
         <li>
-          <strong>Enrollment records:</strong> which cohort you joined, and whether through payment
-          or a sponsor code.
+          <strong>Enrollment records:</strong> when you enrolled, and whether your place is free,
+          paid or sponsored.
         </li>
         <li>
-          <strong>Security data:</strong> your IP address when you enter a sponsor code or log in,
-          used only to limit repeated guessing.
+          <strong>Security data:</strong> your IP address when you log in, used only to limit
+          repeated guessing.
         </li>
       </ul>
 
       <h2>Why we use it</h2>
       <ul>
-        <li>To register and enroll you, and confirm your payment.</li>
-        <li>To contact you about your registration, the cohort and support requests.</li>
-        <li>To keep the sponsor code system and payments secure.</li>
+        <li>To register and enroll you, and confirm any payment.</li>
+        <li>To contact you about your registration, new lessons and support requests.</li>
+        <li>To keep logins and payments secure.</li>
         <li>To keep financial records the law requires.</li>
       </ul>
       <p>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
           <strong>Zoho</strong> — handles our email.
         </li>
         <li>
-          <strong>Telegram</strong> — hosts the cohort community, if you choose to join it.
+          <strong>Telegram</strong> — hosts the learner community, if you choose to join it.
         </li>
       </ul>
       <p>
@@ -86,9 +86,9 @@ export default function PrivacyPage() {
       <h2>How long we keep it</h2>
       <p>
         We keep registration and enrollment details while you take part in the program and for up
-        to 2 years after your cohort ends, so we can confirm your participation. Payment records
-        are kept for as long as tax and accounting law requires. Sponsor code security data is
-        deleted after about a day.
+        to 2 years after your enrollment ends, so we can confirm your participation. Payment records
+        are kept for as long as tax and accounting law requires. Login security data is deleted
+        after about a day.
       </p>
 
       <h2>Your rights</h2>

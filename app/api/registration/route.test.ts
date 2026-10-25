@@ -41,7 +41,7 @@ beforeEach(() => {
 });
 
 describe("POST /api/registration", () => {
-  test("creates a registration for the current cohort and returns its id", async () => {
+  test("creates a registration, enrolls it for free and signs the learner in", async () => {
     cohortExists();
     existingRegistrations();
     supabaseMock.respond("registrations", { data: { id: "reg-123" }, error: null });
@@ -52,6 +52,12 @@ describe("POST /api/registration", () => {
     expect(await response.json()).toEqual({ registrationId: "reg-123" });
     expect(supabaseMock.calls("registrations")).toContainEqual(["insert", savedDetails]);
     expect(supabaseMock.calls("cohorts")).toContainEqual(["eq", "name", "Cohort 1"]);
+    expect(supabaseMock.calls("enrollments")).toContainEqual([
+      "upsert",
+      { registration_id: "reg-123", cohort_id: "cohort-1", access_type: "free" },
+      { onConflict: "registration_id,cohort_id", ignoreDuplicates: true },
+    ]);
+    expect(response.headers.get("set-cookie")).toMatch(/^bss_enrollment=reg-123;/);
   });
 
   test("matches and stores the email in lowercase", async () => {
@@ -74,6 +80,12 @@ describe("POST /api/registration", () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ registrationId: "reg-newest" });
+    expect(response.headers.get("set-cookie")).toMatch(/^bss_enrollment=reg-newest;/);
+    expect(supabaseMock.calls("enrollments")).toContainEqual([
+      "upsert",
+      { registration_id: "reg-newest", cohort_id: "cohort-1", access_type: "free" },
+      { onConflict: "registration_id,cohort_id", ignoreDuplicates: true },
+    ]);
     expect(supabaseMock.calls("enrollments")).toContainEqual([
       "in",
       "registration_id",
@@ -139,6 +151,18 @@ describe("POST /api/registration", () => {
     expect(supabaseMock.calls("registrations")).not.toContainEqual(
       expect.arrayContaining(["insert"])
     );
+  });
+
+  test("returns 500 without signing in if the free enrollment can't be saved", async () => {
+    cohortExists();
+    existingRegistrations();
+    supabaseMock.respond("registrations", { data: { id: "reg-123" }, error: null });
+    supabaseMock.respond("enrollments", { data: null, error: { message: "boom" } });
+
+    const response = await register();
+
+    expect(response.status).toBe(500);
+    expect(response.headers.get("set-cookie")).toBeNull();
   });
 
   test("returns 500 when the insert fails", async () => {

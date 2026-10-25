@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { registrationSchema } from "@/lib/schemas";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { PROGRAM } from "@/constants/program";
+import { setEnrollmentCookie } from "@/lib/enrollment-access";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -17,12 +18,12 @@ export async function POST(request: Request) {
   const { fullName, email, phone, experienceLevel, learningGoal } = parsed.data;
   const supabase = getSupabaseServerClient();
 
-  // Registration is for the current cohort; without it nobody could
-  // enroll, so treat a missing cohort as a server error.
+  // Every registration belongs to the one enrollment cohort row; without
+  // it nobody could enroll, so treat a missing row as a server error.
   const { data: cohort, error: cohortError } = await supabase
     .from("cohorts")
     .select("id")
-    .eq("name", PROGRAM.firstCohort)
+    .eq("name", PROGRAM.enrollmentCohort)
     .maybeSingle();
 
   if (cohortError || !cohort) {
@@ -42,9 +43,8 @@ export async function POST(request: Request) {
     cohort_id: cohort.id,
   };
 
-  // A returning registrant (same email, same cohort) continues with their
-  // existing registration rather than creating a duplicate, so they can't
-  // end up paying twice from a fresh, unenrolled registration.
+  // A returning registrant (same email) continues with their existing
+  // registration rather than creating a duplicate.
   const { data: existing, error: existingError } = await supabase
     .from("registrations")
     .select("id")
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ registrationId: ids[0] }, { status: 200 });
+    return enrollFree(supabase, cohort.id, ids[0], 200);
   }
 
   const { data, error } = await supabase
@@ -122,5 +122,32 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({ registrationId: data.id }, { status: 201 });
+  return enrollFree(supabase, cohort.id, data.id, 201);
+}
+
+/**
+ * Learning is free for now, so registering enrolls straight away and
+ * signs the learner in with the enrollment cookie.
+ */
+async function enrollFree(
+  supabase: ReturnType<typeof getSupabaseServerClient>,
+  cohortId: string,
+  registrationId: string,
+  status: 200 | 201
+) {
+  // A double-submitted form must not create a second enrollment.
+  const { error } = await supabase.from("enrollments").upsert(
+    { registration_id: registrationId, cohort_id: cohortId, access_type: "free" },
+    { onConflict: "registration_id,cohort_id", ignoreDuplicates: true }
+  );
+
+  if (error) {
+    console.error("free enrollment failed", error);
+    return NextResponse.json(
+      { error: "Could not complete your registration. Please try again." },
+      { status: 500 }
+    );
+  }
+
+  return setEnrollmentCookie(NextResponse.json({ registrationId }, { status }), registrationId);
 }

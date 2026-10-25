@@ -5,41 +5,30 @@ import { SupportEmail } from "@/app/support-email";
 
 export const metadata: Metadata = {
   title: `Refund Policy — ${PROGRAM.name}`,
-  description: `When you can get a refund of the ${PROGRAM.name} enrollment fee, and how to ask for one.`,
+  description: `When you can get a refund of a fee paid to ${PROGRAM.name}, and how to ask for one.`,
 };
 
 export default function RefundPolicyPage() {
-  const fee = `₦${PROGRAM.standardPrice.toLocaleString()}`;
-
   return (
-    <LegalPage title="Refund Policy" updated="9 October 2026">
+    <LegalPage title="Refund Policy" updated="25 October 2026">
       <p>
-        This policy covers the {fee} enrollment fee for {PROGRAM.name}, run by {PROGRAM.operator}.
-        Each cohort is a {PROGRAM.duration} online program; {PROGRAM.firstCohort} starts on{" "}
-        {PROGRAM.firstCohortStart}.
+        Learning with {PROGRAM.name}, run by {PROGRAM.operator}, is currently free, so there is
+        nothing to pay and nothing to refund. This policy covers any fee you have paid us, and
+        any fee we introduce in future.
       </p>
 
       <h2>When you can get a refund</h2>
       <ul>
         <li>
-          <strong>Before the cohort starts:</strong> a full refund, if you ask by the day before
-          the cohort&apos;s start date.
+          <strong>Within 7 days of paying:</strong> a full refund.
         </li>
         <li>
-          <strong>During the first week:</strong> a 50% refund, if you ask within the first 7 days
-          of the cohort.
+          <strong>From day 8 to day 14:</strong> a 50% refund.
         </li>
         <li>
-          <strong>After the first week:</strong> no refund.
-        </li>
-        <li>
-          <strong>If we cancel or postpone the cohort</strong> and you can&apos;t join the new
-          dates: a full refund, whenever you ask.
+          <strong>After 14 days:</strong> no refund.
         </li>
       </ul>
-      <p>
-        Sponsored places, enrolled with a sponsor code, are free, so there is nothing to refund.
-      </p>
 
       <h2>How to ask for a refund</h2>
       <p>
@@ -52,7 +41,7 @@ export default function RefundPolicyPage() {
       <p>
         Refunds go back to the card or account you paid with, through Paystack. Once approved,
         they usually arrive within 5–10 working days, depending on your bank. When a refund is
-        issued, your enrollment ends and you are removed from the cohort&apos;s community.
+        issued, your enrollment ends and you are removed from the learner community.
       </p>
     </LegalPage>
   );

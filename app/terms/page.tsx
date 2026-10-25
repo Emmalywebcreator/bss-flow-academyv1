@@ -6,14 +6,12 @@ import { SupportEmail } from "@/app/support-email";
 
 export const metadata: Metadata = {
   title: `Terms and Conditions — ${PROGRAM.name}`,
-  description: `The terms for registering for and taking part in ${PROGRAM.name}, including fees, sponsored places and course materials.`,
+  description: `The terms for registering for and taking part in ${PROGRAM.name}, including fees, the learner community and course materials.`,
 };
 
 export default function TermsPage() {
-  const fee = `₦${PROGRAM.standardPrice.toLocaleString()}`;
-
   return (
-    <LegalPage title="Terms and Conditions" updated="9 October 2026">
+    <LegalPage title="Terms and Conditions" updated="25 October 2026">
       <p>
         These terms apply when you register for or take part in {PROGRAM.name} (&quot;we&quot;,
         &quot;us&quot;), a training program run by {PROGRAM.operator} from {PROGRAM.location}. By
@@ -22,11 +20,10 @@ export default function TermsPage() {
 
       <h2>The program</h2>
       <p>
-        {PROGRAM.name} runs {PROGRAM.topic} training in cohorts. Each cohort is a{" "}
-        {PROGRAM.duration} {PROGRAM.format.toLowerCase()} program. {PROGRAM.firstCohort} starts on{" "}
-        {PROGRAM.firstCohortStart}. Session times, links and announcements are shared in the
-        cohort&apos;s Telegram community. We may adjust the schedule or content to improve the
-        program; we will tell you in the community first.
+        {PROGRAM.name} offers self-paced {PROGRAM.topic} lessons online, which you work through in
+        your own time. Registered learners can also join our Telegram community, where we share
+        announcements and new lessons. We may add, change or remove lessons to improve the
+        program.
       </p>
 
       <h2>Registration</h2>
@@ -37,24 +34,16 @@ export default function TermsPage() {
 
       <h2>Fees and payment</h2>
       <p>
-        The enrollment fee is {fee}, paid once, in Nigerian naira, through Paystack. We never see
-        or store your card details. You are enrolled once the payment is confirmed. Refunds follow
-        our <Link href="/refund-policy">Refund Policy</Link>.
-      </p>
-
-      <h2>Sponsored places</h2>
-      <p>
-        Some places are sponsored and enrolled with a sponsor code instead of a payment. Codes are
-        for the people they were given to, and each cohort has a limited number of sponsored
-        places. We may cancel an enrollment made with a code that was shared or used without
-        permission.
+        Learning with {PROGRAM.name} is currently free: registering costs nothing and you are
+        enrolled straight away. If we introduce a fee, we will show it on the site before you are
+        asked to pay. Fees are paid in Nigerian naira through Paystack; we never see or store your
+        card details. Refunds follow our <Link href="/refund-policy">Refund Policy</Link>.
       </p>
 
       <h2>Your enrollment and the community</h2>
       <p>
-        Your enrollment is personal. Don&apos;t share the Telegram invite link, session links or
-        course materials with anyone who isn&apos;t enrolled. Be respectful to other students and
-        instructors. We may remove anyone who harasses others, shares access, or disrupts the
+        Your enrollment is personal. Don&apos;t share the Telegram invite link or course materials
+        with anyone who isn&apos;t enrolled. Be respectful to other learners and instructors. We may remove anyone who harasses others, shares access, or disrupts the
         program, without a refund.
       </p>
 
@@ -73,7 +62,7 @@ export default function TermsPage() {
       <h2>Liability</h2>
       <p>
         As far as the law allows, our total liability to you for anything to do with the program is
-        limited to the fee you paid.
+        limited to any fee you paid us.
       </p>
 
       <h2>Privacy</h2>

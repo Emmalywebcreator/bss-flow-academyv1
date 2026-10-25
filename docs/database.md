@@ -76,12 +76,12 @@ Fields:
 
 ## Enrollment access types
 
+- free — registered while learning is free (since 2026-10-25)
 - paid
-- sponsored
+- sponsored — enrolled with a sponsor code; codes are retired, existing rows are kept
 
 ## Important rule
 
-A successful Paystack payment creates or activates an enrollment.
+Registering creates a free enrollment, without a payment transaction.
 
-A valid sponsored cohort code creates or activates an enrollment
-without creating a payment transaction.
+A successful Paystack payment creates or activates an enrollment.

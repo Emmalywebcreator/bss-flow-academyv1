@@ -1,9 +1,7 @@
 import Link from "next/link";
-import { PROGRAM } from "@/constants/program";
 import { LESSONS, type Lesson } from "@/constants/learning";
 import { Section, StatusBadge } from "@/app/_home/section";
 
-const fee = `₦${PROGRAM.standardPrice.toLocaleString()}`;
 
 /** The first lessons, and how to register as a learner. */
 export function FeaturedLearning() {
@@ -69,20 +67,15 @@ function RegisterCard() {
     <article className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 lg:col-span-2 dark:border-zinc-800 dark:bg-black">
       <h3 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">Register as a learner</h3>
       <p className="text-zinc-600 dark:text-zinc-400">
-        Join with a sponsored code or a one-time fee of {fee}.
+        It&apos;s free. Register to follow the lessons at your own pace and join the learner
+        community.
       </p>
       <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
         <Link
           href="/register"
           className="rounded-full bg-zinc-950 px-8 py-3 text-base font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
         >
-          Register now
-        </Link>
-        <Link
-          href="/refund-policy"
-          className="text-sm text-zinc-600 underline underline-offset-2 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
-        >
-          Refund policy
+          Register for free
         </Link>
       </div>
     </article>

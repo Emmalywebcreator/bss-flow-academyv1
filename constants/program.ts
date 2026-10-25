@@ -2,13 +2,14 @@ export const PROGRAM = {
   name: "BSS Flow Academy",
   tagline: "Build. Scale. Ship.",
   currency: "NGN",
-  // The enrollment fee in naira — the single source of truth for both the
-  // amount charged (payment/initialize) and the price shown on the site.
+  // The enrollment fee in naira, charged by payment/initialize. Learning
+  // is free for now (since 2026-10-25), so the site doesn't offer payment
+  // and doesn't show this price; the payment code stays for when it returns.
   standardPrice: 80000,
-  firstCohort: "Cohort 1",
+  // The database row every registration and enrollment belongs to. Left
+  // from when learning ran in cohorts; never shown to learners.
+  enrollmentCohort: "Cohort 1",
   topic: "Web Development with AI",
-  firstCohortStart: "15 October 2026",
-  duration: "6 weeks",
   format: "Online",
   // The person who runs the academy (not CAC registered). Named in the
   // terms, privacy and refund pages, and must match the Paystack account.

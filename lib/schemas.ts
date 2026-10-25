@@ -13,11 +13,6 @@ export const registrationSchema = z.object({
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;
 
-export const cohortCodeSchema = z.object({
-  registrationId: z.string().uuid(),
-  code: z.string().trim().min(1, "Enter a cohort code."),
-});
-
 export const paymentInitializeSchema = z.object({
   registrationId: z.string().uuid(),
 });

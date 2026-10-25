@@ -23,43 +23,37 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-async function goToCodeStep() {
-  render(<RegisterPage />);
-
+function fillAndSubmit() {
   fireEvent.change(screen.getByLabelText("Full name"), { target: { value: "Ada Lovelace" } });
   fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } });
   fireEvent.change(screen.getByLabelText("Phone"), { target: { value: "08012345678" } });
   fireEvent.change(screen.getByLabelText("Experience level"), {
     target: { value: "beginner" },
   });
-  fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-
-  fireEvent.click(await screen.findByRole("button", { name: "I have a sponsor code" }));
-  return screen.getByLabelText("Sponsor code");
+  fireEvent.click(screen.getByRole("button", { name: "Register for free" }));
 }
 
-test("sponsor code input does not hint at a real code", async () => {
-  const input = await goToCodeStep();
-  const placeholder = input.getAttribute("placeholder") ?? "";
+test("registering is free and goes straight to the learning page", async () => {
+  render(<RegisterPage />);
+  expect(document.body.textContent).not.toMatch(/sponsor|Paystack|₦/i);
 
-  expect(placeholder).not.toMatch(/COHORT1-SPONSOR/i);
-  // No code-shaped example such as "ABC-123" either.
-  expect(placeholder).not.toMatch(/[A-Z0-9]{3,}-[A-Z0-9]{3,}/);
-});
-
-test("sends an already-enrolled student to the learning page instead of Paystack", async () => {
-  await goToCodeStep();
-  vi.mocked(fetch).mockResolvedValueOnce(
-    new Response(JSON.stringify({ error: "You're already enrolled.", alreadyEnrolled: true }), {
-      status: 409,
-    })
-  );
-
-  fireEvent.click(screen.getByRole("button", { name: "Back" }));
-  fireEvent.click(screen.getByRole("button", { name: /Pay .* with Paystack/ }));
+  fillAndSubmit();
 
   await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/learn"));
-  expect(vi.mocked(fetch)).toHaveBeenLastCalledWith("/api/payment/initialize", expect.anything());
+  expect(vi.mocked(fetch)).toHaveBeenCalledWith("/api/registration", expect.anything());
+  expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
+});
+
+test("shows the server's error and stays on the form", async () => {
+  vi.mocked(fetch).mockResolvedValueOnce(
+    new Response(JSON.stringify({ error: "This email is already enrolled." }), { status: 409 })
+  );
+  render(<RegisterPage />);
+
+  fillAndSubmit();
+
+  expect(await screen.findByText("This email is already enrolled.")).toBeDefined();
+  expect(push).not.toHaveBeenCalled();
 });
 
 test("registration form links to the terms and privacy policy", () => {
