@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { SiteHeader } from "@/app/site-header";
 import { SiteFooter } from "@/app/site-footer";
 import { PROGRAM } from "@/constants/program";
+import { SessionProvider } from "@/app/session";
+import { ENROLLMENT_COOKIE } from "@/lib/enrollment-access";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,7 +23,10 @@ export const metadata: Metadata = {
   description: `Learn practical technology skills in plain language, at your own pace with ${PROGRAM.name}, starting with how the internet and websites work.`,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Only decides which buttons to show; /learn verifies the enrollment.
+  const signedIn = (await cookies()).has(ENROLLMENT_COOKIE);
+
   return (
     <html
       lang="en"
@@ -33,11 +39,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
-        <SiteHeader />
-        <div id="content" tabIndex={-1} className="flex flex-1 flex-col outline-none">
-          {children}
-        </div>
-        <SiteFooter />
+        <SessionProvider signedIn={signedIn}>
+          <SiteHeader />
+          <div id="content" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+            {children}
+          </div>
+          <SiteFooter />
+        </SessionProvider>
       </body>
     </html>
   );

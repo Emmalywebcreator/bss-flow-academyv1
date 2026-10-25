@@ -66,3 +66,10 @@ test("registration form links to the terms and privacy policy", () => {
     "/privacy"
   );
 });
+
+test("registration form offers a way to log in instead", () => {
+  render(<RegisterPage />);
+
+  expect(screen.getByText(/Already have an account\?/)).toBeDefined();
+  expect(screen.getByRole("link", { name: "Log in" }).getAttribute("href")).toBe("/login");
+});

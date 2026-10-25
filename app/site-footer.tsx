@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PROGRAM } from "@/constants/program";
 import { NAV_LINKS } from "@/app/nav-links";
+import { SignedIn, SignedOut } from "@/app/session";
 
 const linkClass = "hover:text-zinc-950 dark:hover:text-zinc-50";
 
@@ -21,12 +22,19 @@ export function SiteFooter() {
               {link.label}
             </Link>
           ))}
-          <Link href="/register" className={linkClass}>
-            Register
-          </Link>
-          <Link href="/login" className={linkClass}>
-            Log in
-          </Link>
+          <SignedOut>
+            <Link href="/register" className={linkClass}>
+              Register
+            </Link>
+            <Link href="/login" className={linkClass}>
+              Log in
+            </Link>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/learn" className={linkClass}>
+              My learning
+            </Link>
+          </SignedIn>
         </nav>
 
         <nav aria-label="Policies" className="flex flex-col gap-2">

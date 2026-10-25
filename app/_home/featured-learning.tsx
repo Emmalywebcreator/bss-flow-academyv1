@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LESSONS, type Lesson } from "@/constants/learning";
+import { SignedIn, SignedOut } from "@/app/session";
 import { Section, StatusBadge } from "@/app/_home/section";
-
 
 /** The first lessons, and how to register as a learner. */
 export function FeaturedLearning() {
@@ -62,22 +62,37 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
   );
 }
 
+/** Register invitation, or a way back to learning once signed in. */
 function RegisterCard() {
   return (
     <article className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 lg:col-span-2 dark:border-zinc-800 dark:bg-black">
-      <h3 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">Register as a learner</h3>
-      <p className="text-zinc-600 dark:text-zinc-400">
-        It&apos;s free. Register to follow the lessons at your own pace and join the learner
-        community.
-      </p>
-      <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
-        <Link
-          href="/register"
-          className="rounded-full bg-zinc-950 px-8 py-3 text-base font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
-        >
-          Register for free
-        </Link>
-      </div>
+      <SignedOut>
+        <h3 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">Register as a learner</h3>
+        <p className="text-zinc-600 dark:text-zinc-400">
+          It&apos;s free. Register to follow the lessons at your own pace and join the learner
+          community.
+        </p>
+        <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
+          <Link href="/register" className={cardButton}>
+            Register for free
+          </Link>
+        </div>
+      </SignedOut>
+      <SignedIn>
+        <h3 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">Continue learning</h3>
+        <p className="text-zinc-600 dark:text-zinc-400">
+          You&apos;re signed in. Pick up where you left off, or join the learner community, from
+          your learning page.
+        </p>
+        <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
+          <Link href="/learn" className={cardButton}>
+            Go to my learning
+          </Link>
+        </div>
+      </SignedIn>
     </article>
   );
 }
+
+const cardButton =
+  "rounded-full bg-zinc-950 px-8 py-3 text-base font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200";

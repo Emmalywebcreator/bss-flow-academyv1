@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { NAV_LINKS } from "@/app/nav-links";
 import { MobileNav } from "@/app/mobile-nav";
+import { SignedIn, SignedOut } from "@/app/session";
 
-/** Logo, primary navigation and the register button, shown on every page. */
+/**
+ * Logo, primary navigation, and Log in and Register buttons (or My
+ * learning, once signed in), shown on every page.
+ */
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-black/95">
@@ -31,25 +35,32 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          {/* On phones, "Log in" lives in the menu to leave room for the logo. */}
-          <Link
-            href="/login"
-            className="hidden rounded-full px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 sm:block dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
-          >
-            Log in
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
-          >
-            Register
-          </Link>
+          <SignedOut>
+            {/* On phones, "Log in" lives in the menu to leave room for the logo. */}
+            <Link
+              href="/login"
+              className="hidden rounded-full px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 sm:block dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
+            >
+              Log in
+            </Link>
+            <Link href="/register" className={primaryButton}>
+              Register
+            </Link>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/learn" className={primaryButton}>
+              My learning
+            </Link>
+          </SignedIn>
           <MobileNav />
         </div>
       </div>
     </header>
   );
 }
+
+const primaryButton =
+  "rounded-full bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-50 transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200";
 
 /** Three rising bars: build, scale, ship. */
 function LogoMark() {
