@@ -91,12 +91,14 @@ test("time spent with the tab hidden doesn't count", async () => {
   expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("0");
 });
 
-test("the last part shows the next topic, unlinked, and finishes the lesson", async () => {
+test("the last part links to the next lesson and finishes this one", async () => {
   await renderPart(PARTS.at(-1)!.slug);
 
   const next = document.getElementById("next-topic")!;
-  expect(within(next).getByText("Coming soon")).toBeDefined();
-  expect(within(next).queryByRole("link", { name: /Introduction to HTML/ })).toBeNull();
+  expect(within(next).getByRole("heading", { name: "Next topic: HTML5: Structuring Websites" })).toBeDefined();
+  expect(within(next).getByRole("link", { name: /Start lesson 2/ }).getAttribute("href")).toBe(
+    "/learn/foundations/html5-structuring-websites"
+  );
   expect(within(next).getByRole("link", { name: "Register" }).getAttribute("href")).toBe("/register");
   expect(screen.getByRole("link", { name: /Finish the lesson/ }).getAttribute("href")).toBe(BASE);
 });
