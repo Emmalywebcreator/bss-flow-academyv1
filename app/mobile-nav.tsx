@@ -52,18 +52,16 @@ export function MobileNav() {
                 </Link>
               </li>
             ))}
-            {/* Signed-in visitors have My learning in the header instead. */}
-            {!signedIn && (
-              <li className="mt-2 border-t border-zinc-200 pt-2 sm:hidden dark:border-zinc-800">
-                <Link
-                  href="/login"
-                  onClick={() => setOpen(false)}
-                  className="block rounded-lg px-3 py-3 font-medium text-zinc-950 hover:bg-zinc-100 dark:text-zinc-50 dark:hover:bg-zinc-900"
-                >
-                  Log in
-                </Link>
-              </li>
-            )}
+            {/* Next to the header's button: Register, or My learning once signed in. */}
+            <li className="mt-2 border-t border-zinc-200 pt-2 sm:hidden dark:border-zinc-800">
+              <Link
+                href={signedIn ? "/logout" : "/login"}
+                onClick={() => setOpen(false)}
+                className="block rounded-lg px-3 py-3 font-medium text-zinc-950 hover:bg-zinc-100 dark:text-zinc-50 dark:hover:bg-zinc-900"
+              >
+                {signedIn ? "Log out" : "Log in"}
+              </Link>
+            </li>
           </ul>
         </nav>
       )}

@@ -28,20 +28,24 @@ test("signed-out visitors see Log in and Register in the header and menu", () =>
   expect(within(document.getElementById("mobile-nav")!).getByRole("link", { name: "Log in" })).toBeDefined();
 });
 
-test("signed-in learners see My learning instead, in the header and menu", () => {
+test("signed-in learners see My learning and Log out instead, in the header and menu", () => {
   renderAs(true, <SiteHeader />);
 
   expect(screen.getByRole("link", { name: "My learning" }).getAttribute("href")).toBe("/learn");
+  expect(screen.getByRole("link", { name: "Log out" }).getAttribute("href")).toBe("/logout");
   expect(screen.queryByRole("link", { name: "Log in" })).toBeNull();
   expect(screen.queryByRole("link", { name: "Register" })).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
-  expect(within(document.getElementById("mobile-nav")!).queryByRole("link", { name: "Log in" })).toBeNull();
+  const menu = document.getElementById("mobile-nav")!;
+  expect(within(menu).queryByRole("link", { name: "Log in" })).toBeNull();
+  expect(within(menu).getByRole("link", { name: "Log out" }).getAttribute("href")).toBe("/logout");
 });
 
-test("the footer swaps Register and Log in for My learning once signed in", () => {
+test("the footer swaps Register and Log in for My learning and Log out once signed in", () => {
   renderAs(true, <SiteFooter />);
 
   expect(screen.getByRole("link", { name: "My learning" }).getAttribute("href")).toBe("/learn");
+  expect(screen.getByRole("link", { name: "Log out" }).getAttribute("href")).toBe("/logout");
   expect(screen.queryByRole("link", { name: "Register" })).toBeNull();
   expect(screen.queryByRole("link", { name: "Log in" })).toBeNull();
 });

@@ -34,6 +34,9 @@ export function SiteFooter() {
             <Link href="/learn" className={linkClass}>
               My learning
             </Link>
+            <Link href="/logout" className={linkClass}>
+              Log out
+            </Link>
           </SignedIn>
         </nav>
 
