@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { LESSONS, type Lesson } from "@/constants/learning";
+import { LEARNING_PATH, LESSONS, type Lesson } from "@/constants/learning";
 import { PROGRAM } from "@/constants/program";
 import { requireEnrollment } from "@/lib/enrollment-access";
 import { StatusBadge } from "@/app/_home/section";
@@ -69,7 +69,11 @@ type Crumb = { label: string; href?: string };
 function Breadcrumb({ lesson, trail }: { lesson: Lesson; trail: readonly Crumb[] }) {
   const crumbs: Crumb[] = [
     { label: "Home", href: "/" },
-    { label: lesson.stage, href: "/#learning-paths" },
+    {
+      label: lesson.stage,
+      // Path stages are on the home page's learning paths; areas such as Programming are under Explore.
+      href: LEARNING_PATH.some((stage) => stage.title === lesson.stage) ? "/#learning-paths" : "/#explore",
+    },
     ...trail,
   ];
   return (
@@ -94,9 +98,9 @@ function Breadcrumb({ lesson, trail }: { lesson: Lesson; trail: readonly Crumb[]
   );
 }
 
-/** The lesson after this one: linked once published, "Coming soon" before. */
+/** The next lesson in the same stage: linked once published, "Coming soon" before. */
 function NextLesson({ lesson }: { lesson: Lesson }) {
-  const next = LESSONS.find((l) => l.number === lesson.number + 1);
+  const next = LESSONS.find((l) => l.stage === lesson.stage && l.number === lesson.number + 1);
 
   return (
     <section id="next-topic" aria-labelledby="next-topic-heading" className="flex flex-col gap-5">
@@ -164,7 +168,7 @@ export function LessonOverview({ definition }: { definition: LessonDefinition })
             <StatusBadge>
               {lesson.stage} &middot; Lesson {lesson.number}
             </StatusBadge>
-            <StatusBadge>Beginner</StatusBadge>
+            <StatusBadge>{lesson.level}</StatusBadge>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-zinc-950 sm:text-5xl dark:text-zinc-50">
             {lesson.title}
