@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { LESSONS, type Lesson } from "@/constants/learning";
+import { LEARNING_PATH, lessonsIn, type Lesson } from "@/constants/learning";
 import { SignedIn, SignedOut } from "@/app/session";
 import { LessonLink } from "@/app/_home/lesson-link";
 import { Section, StatusBadge } from "@/app/_home/section";
 
-/** The first lessons, and how to register as a learner. */
+/** The first lessons of the learning path, and how to register as a learner. */
 export function FeaturedLearning() {
   return (
     <Section
@@ -16,7 +16,7 @@ export function FeaturedLearning() {
     >
       <div className="grid gap-6 lg:grid-cols-5">
         <ul className="flex flex-col gap-6 lg:col-span-3">
-          {LESSONS.map((lesson) => (
+          {lessonsIn(LEARNING_PATH[0].title).map((lesson) => (
             <li key={lesson.title} className="flex-1">
               <LessonCard lesson={lesson} />
             </li>

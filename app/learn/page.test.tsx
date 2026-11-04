@@ -128,6 +128,14 @@ test("greets an enrolled learner and recommends Foundations for beginners", asyn
       .getAttribute("href")
   ).toBe("/learn/foundations/html5-structuring-websites");
   expect(screen.getAllByText("Planned")).toHaveLength(3);
+
+  const programming = screen.getByRole("heading", { name: "Object-Oriented Python" }).closest("article")!;
+  expect(within(programming).getAllByRole("link").map((l) => l.getAttribute("href"))).toEqual([
+    "/learn/programming/python-oop-basics",
+    "/learn/programming/python-oop-inheritance-and-design",
+    "/learn/programming/python-oop-advanced-classes",
+  ]);
+  expect(programming.textContent).toContain("Lesson 3: Object-Oriented Python: Advanced Classes · Advanced");
 });
 
 test("still welcomes the learner if their name can't be read", async () => {

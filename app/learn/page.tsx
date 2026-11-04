@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { LEARNING_PATH, LESSONS } from "@/constants/learning";
+import { LEARNING_PATH, lessonsIn, type Lesson } from "@/constants/learning";
 import { PROGRAM } from "@/constants/program";
 import { SupportEmail } from "@/app/support-email";
 import {
@@ -62,7 +62,8 @@ export default async function LearnPage() {
 
   const firstName = await getLearnerFirstName(registrationId!);
   const [firstStage, ...laterStages] = LEARNING_PATH;
-  const foundationsLessons = LESSONS.filter((lesson) => lesson.stage === firstStage.title);
+  const foundationsLessons = lessonsIn(firstStage.title);
+  const programmingLessons = lessonsIn("Programming");
 
   return (
     <div className="flex flex-1 justify-center bg-zinc-50 px-4 py-16 sm:px-6 dark:bg-black">
@@ -96,34 +97,28 @@ export default async function LearnPage() {
             </div>
             <h3 className="text-2xl font-bold text-zinc-950 dark:text-zinc-50">{firstStage.title}</h3>
             <p className="text-zinc-600 dark:text-zinc-400">{firstStage.description}</p>
-            <ul className="flex flex-col gap-3">
-              {foundationsLessons.map((lesson) => (
-                <li key={lesson.number}>
-                  {lesson.status === "published" && lesson.href ? (
-                    <Link
-                      href={lesson.href}
-                      className="flex flex-col gap-1 rounded-xl border border-zinc-200 p-4 transition-colors hover:border-accent hover:bg-accent-soft sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800"
-                    >
-                      <span className="text-sm font-medium text-zinc-950 dark:text-zinc-50">
-                        Lesson {lesson.number}: {lesson.title}
-                      </span>
-                      <span className="text-sm font-semibold text-accent">
-                        Start lesson <span aria-hidden="true">&rarr;</span>
-                      </span>
-                    </Link>
-                  ) : (
-                    <div className="rounded-xl border border-dashed border-zinc-300 p-4 dark:border-zinc-700">
-                      <p className="text-sm font-medium text-zinc-950 dark:text-zinc-50">
-                        Lesson {lesson.number}: {lesson.title}
-                      </p>
-                      <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                        Coming soon — it will open here as soon as it&apos;s published.
-                      </p>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <LessonList lessons={foundationsLessons} />
+          </article>
+
+          <article
+            aria-labelledby="programming-heading"
+            className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 dark:border-zinc-800 dark:bg-zinc-950"
+          >
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
+                Programming
+              </span>
+              <span className="text-sm text-zinc-500 dark:text-zinc-400">Python &middot; Beginner to advanced</span>
+            </div>
+            <h3 id="programming-heading" className="text-2xl font-bold text-zinc-950 dark:text-zinc-50">
+              Object-Oriented Python
+            </h3>
+            <p className="text-zinc-600 dark:text-zinc-400">
+              Learn to organise Python code with classes and objects, from your first class to
+              advanced design. Three lessons, each with examples, quick checks and coding
+              challenges.
+            </p>
+            <LessonList lessons={programmingLessons} showLevel />
           </article>
 
           <ul className="grid gap-4 sm:grid-cols-3">
@@ -181,5 +176,42 @@ export default async function LearnPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+/** A stage's lessons: published ones linked, the rest marked "Coming soon". */
+function LessonList({ lessons, showLevel = false }: { lessons: readonly Lesson[]; showLevel?: boolean }) {
+  return (
+    <ul className="flex flex-col gap-3">
+      {lessons.map((lesson) => (
+        <li key={lesson.href ?? lesson.title}>
+          {lesson.status === "published" && lesson.href ? (
+            <Link
+              href={lesson.href}
+              className="flex flex-col gap-1 rounded-xl border border-zinc-200 p-4 transition-colors hover:border-accent hover:bg-accent-soft sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800"
+            >
+              <span className="text-sm font-medium text-zinc-950 dark:text-zinc-50">
+                Lesson {lesson.number}: {lesson.title}
+                {showLevel && (
+                  <span className="font-normal text-zinc-500 dark:text-zinc-400"> &middot; {lesson.level}</span>
+                )}
+              </span>
+              <span className="text-sm font-semibold text-accent">
+                Start lesson <span aria-hidden="true">&rarr;</span>
+              </span>
+            </Link>
+          ) : (
+            <div className="rounded-xl border border-dashed border-zinc-300 p-4 dark:border-zinc-700">
+              <p className="text-sm font-medium text-zinc-950 dark:text-zinc-50">
+                Lesson {lesson.number}: {lesson.title}
+              </p>
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                Coming soon — it will open here as soon as it&apos;s published.
+              </p>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }

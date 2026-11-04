@@ -3,7 +3,7 @@ import { afterEach, expect, test } from "vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import Home from "./page";
 import { PROGRAM } from "@/constants/program";
-import { LEARNING_AREAS, LESSONS } from "@/constants/learning";
+import { LEARNING_AREAS, LEARNING_PATH, LESSONS, lessonsIn } from "@/constants/learning";
 import { NAV_LINKS } from "@/app/nav-links";
 
 afterEach(cleanup);
@@ -43,6 +43,14 @@ test("every in-page navigation link has a matching section", () => {
   }
 });
 
+test("Start here features only the Foundations lessons", () => {
+  render(<Home />);
+
+  for (const lesson of LESSONS.filter((l) => l.stage !== LEARNING_PATH[0].title)) {
+    expect(screen.queryByRole("heading", { level: 3, name: lesson.title })).toBeNull();
+  }
+});
+
 test("learning areas are labelled planned and not linked", () => {
   render(<Home />);
 
@@ -56,7 +64,7 @@ test("learning areas are labelled planned and not linked", () => {
 test("published lessons send signed-out visitors to register first; coming-soon lessons aren't linked", () => {
   render(<Home />);
 
-  for (const lesson of LESSONS) {
+  for (const lesson of lessonsIn(LEARNING_PATH[0].title)) {
     const card = screen.getByRole("heading", { level: 3, name: lesson.title }).closest("article")!;
     if (lesson.status === "published") {
       expect(within(card).getByRole("link", { name: `Start lesson ${lesson.number}` }).getAttribute("href")).toBe(

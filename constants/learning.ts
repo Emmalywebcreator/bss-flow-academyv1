@@ -24,7 +24,7 @@ export const LEARNING_AREAS: readonly LearningArea[] = [
     title: "Programming",
     description:
       "Learn to think in code: variables, logic, functions and data, explained from first principles.",
-    status: "planned",
+    status: "open",
   },
   {
     id: "software-engineering",
@@ -108,9 +108,12 @@ export const TEACHING_PRINCIPLES: readonly Principle[] = [
 ];
 
 export type Lesson = {
+  /** Position within its stage: each stage counts from 1. */
   number: number;
   title: string;
+  /** A stage of the learning path, or a learning area such as "Programming". */
   stage: string;
+  level: "Beginner" | "Intermediate" | "Advanced";
   summary: string;
   // Lessons without a page yet are shown as "Coming soon", never linked.
   status: "published" | "coming-soon";
@@ -122,6 +125,7 @@ export const LESSONS: readonly Lesson[] = [
     number: 1,
     title: "How the Internet and Websites Work",
     stage: "Foundations",
+    level: "Beginner",
     summary:
       "What happens between typing a web address and seeing a page: browsers, DNS, servers, databases, and how HTML, CSS and JavaScript fit together.",
     status: "published",
@@ -131,8 +135,44 @@ export const LESSONS: readonly Lesson[] = [
     number: 2,
     title: "HTML5: Structuring Websites",
     stage: "Foundations",
+    level: "Beginner",
     summary: "Learn the anatomy of HTML syntax to structure your websites.",
     status: "published",
     href: "/learn/foundations/html5-structuring-websites",
   },
+  {
+    number: 1,
+    title: "Object-Oriented Python: The Basics",
+    stage: "Programming",
+    level: "Beginner",
+    summary:
+      "Classes and objects, the __init__ constructor, methods and self, class attributes, and printing objects with __str__ and __repr__.",
+    status: "published",
+    href: "/learn/programming/python-oop-basics",
+  },
+  {
+    number: 2,
+    title: "Object-Oriented Python: Inheritance and Design",
+    stage: "Programming",
+    level: "Intermediate",
+    summary:
+      "Encapsulation and @property, inheritance and super(), polymorphism, class and static methods, operator overloading, and composition.",
+    status: "published",
+    href: "/learn/programming/python-oop-inheritance-and-design",
+  },
+  {
+    number: 3,
+    title: "Object-Oriented Python: Advanced Classes",
+    stage: "Programming",
+    level: "Advanced",
+    summary:
+      "Abstract base classes, mixins and the MRO, dataclasses, iterators and context managers, descriptors, __slots__, metaclasses, protocols, and SOLID design patterns.",
+    status: "published",
+    href: "/learn/programming/python-oop-advanced-classes",
+  },
 ];
+
+/** The lessons of one stage or area, in order. */
+export function lessonsIn(stage: string): Lesson[] {
+  return LESSONS.filter((lesson) => lesson.stage === stage).sort((a, b) => a.number - b.number);
+}
